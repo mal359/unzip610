@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2017 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-2 or later
   (the contents of which are also included in zip.h) for terms of use.
@@ -139,8 +139,10 @@ local z_uint4 near *crytab_init OF((__GPRO));
 /***********************************************************************
  * Return the next byte in the pseudo-random sequence
  */
-int decrypt_byte(__G)
+int decrypt_byte( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     unsigned temp;  /* POTENTIAL BUG:  temp*(temp^1) may overflow in an
                      * unpredictable manner on 16-bit systems; not a problem
@@ -154,9 +156,11 @@ int decrypt_byte(__G)
 /***********************************************************************
  * Update the encryption keys with the next byte of plain text
  */
-int update_keys(__G__ c)
+int update_keys( __GX__ OFT( int) c)
+#ifdef NO_PROTO
     __GDEF
     int c;                      /* byte of plain text */
+#endif /* def NO_PROTO */
 {
     GLOBAL(keys[0]) = CRC32(GLOBAL(keys[0]), c, CRY_CRC_TAB);
     GLOBAL(keys[1]) = (GLOBAL(keys[1])
@@ -174,9 +178,11 @@ int update_keys(__G__ c)
  * Initialize the encryption keys and the random header according to
  * the given password.
  */
-void init_keys(__G__ passwd)
+void init_keys( __GX__ OFT( ZCONST char *) passwd)
+#ifdef NO_PROTO
     __GDEF
     ZCONST char *passwd;        /* password string with which to modify keys */
+#endif /* def NO_PROTO */
 {
 #  ifdef IZ_CRC_BE_OPTIMIZ
     if (cry_crctb_p == NULL) {
@@ -378,13 +384,20 @@ ush SH(uch* p) { return ((ush)(uch)((p)[0]) | ((ush)(uch)((p)[1]) << 8)); }
  * Used "long" to accommodate any systems with 16-bit "int".)
  */
 
-int ef_scan_for_aes( ef_buf, ef_len, vers, vend, mode, mthd)
+int ef_scan_for_aes( OFT( ZCONST uch *) ef_buf,
+                     OFT( long) ef_len,
+                     OFT( ush *) vers,
+                     OFT( ush *) vend,
+                     OFT( char *) mode,
+                     OFT( ush *) mthd)
+#ifdef NO_PROTO
     ZCONST uch *ef_buf;         /* Buffer containing extra field */
     long ef_len;                /* Total length of extra field */
     ush *vers;                  /* Return storage: AES encryption version. */
     ush *vend;                  /* Return storage: AES encryption vendor. */
     char *mode;                 /* Return storage: AES encryption mode. */
     ush *mthd;                  /* Return storage: Real compression method. */
+#endif /* def NO_PROTO */
 {
     int ret = 0;
     unsigned eb_id;
@@ -1060,9 +1073,11 @@ int zipbare(z, passwd)
  * Get the password and set up keys for current zipfile member.
  * Return PK_ class error.
  */
-int decrypt(__G__ passwrd)
+int decrypt( __GX__ OFT( ZCONST char *) passwrd)
+#ifdef NO_PROTO
     __GDEF
     ZCONST char *passwrd;
+#endif /* def NO_PROTO */
 {
     ush b;
     int n;
@@ -1176,10 +1191,12 @@ int decrypt(__G__ passwrd)
 /***********************************************************************
  * Test the password.  Return -1 if bad, 0 if OK.
  */
-local int testp(__G__ hd_len, h)
+local int testp( __GX__ OFT( int) hd_len, OFT( ZCONST uch *) h)
+#ifdef NO_PROTO
     __GDEF
     int hd_len;
     ZCONST uch *h;
+#endif /* def NO_PROTO */
 {
     int r;
     char *key_translated;
@@ -1233,11 +1250,15 @@ local int testp(__G__ hd_len, h)
 } /* end function testp() */
 
 
-local int testkey(__G__ hd_len, h, key)
+local int testkey( __GX__ OFT( int) hd_len,
+                          OFT( ZCONST uch *) h,
+                          OFT( ZCONST char *) key)
+#ifdef NO_PROTO
     __GDEF
     int hd_len;         /* Encryption header length. */
     ZCONST uch *h;      /* Decrypted header. */
     ZCONST char *key;   /* Decryption password to test. */
+#endif /* def NO_PROTO */
 {
     ush b;
 #  ifdef ZIP10

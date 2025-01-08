@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2016 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -219,13 +219,17 @@ static ZCONST ush cpdist8[] =
 }
 
 
-static int get_tree(__G__ l, n)
-     __GDEF
-unsigned *l;            /* bit lengths */
-unsigned n;             /* number expected */
+
 /* Get the bit lengths for a code representation from the compressed
    stream.  If get_tree() returns 4, then there is an error in the data.
    Otherwise zero is returned. */
+
+static int get_tree( __GX__ OFT( unsigned *) l, OFT( unsigned) n)
+#ifdef NO_PROTO
+     __GDEF
+unsigned *l;            /* bit lengths */
+unsigned n;             /* number expected */
+#endif /* def NO_PROTO */
 {
   unsigned i;           /* bytes remaining in list */
   unsigned k;           /* lengths entered */
@@ -257,13 +261,26 @@ unsigned n;             /* number expected */
 #   define SLIDE_MEMMOVE_disabled       /* Some testing suggests unhelpful. */
 #  endif
 
-static int explode_lit(__G__ tb, tl, td, bb, bl, bd, bdl)
-     __GDEF
-struct huft *tb, *tl, *td;      /* literal, length, and distance tables */
-unsigned bb, bl, bd;            /* number of bits decoded by those */
-unsigned bdl;                   /* number of distance low bits */
 /* Decompress the imploded data using coded literals and a sliding
    window (of size 2^(6+bdl) bytes). */
+
+static int explode_lit( __GX__ OFT( struct huft *) tb,
+                               OFT( struct huft *) tl,
+                               OFT( struct huft *) td,
+                               OFT( unsigned) bb,
+                               OFT( unsigned) bl,
+                               OFT( unsigned) bd,
+                               OFT( unsigned) bdl)
+#ifdef NO_PROTO
+     __GDEF
+struct huft *tb;                /* literal, length, and distance tables */
+struct huft *tl;
+struct huft *td;
+unsigned bb;                    /* number of bits decoded by those */
+unsigned bl;
+unsigned bd;
+unsigned bdl;                   /* number of distance low bits */
+#endif /* def NO_PROTO */
 {
   zusz_t s;             /* bytes to decompress */
   register unsigned e;  /* table entry flag/number of extra bits */
@@ -407,13 +424,22 @@ unsigned bdl;                   /* number of distance low bits */
 
 
 
-static int explode_nolit(__G__ tl, td, bl, bd, bdl)
-     __GDEF
-struct huft *tl, *td;   /* length and distance decoder tables */
-unsigned bl, bd;        /* number of bits decoded by tl[] and td[] */
-unsigned bdl;           /* number of distance low bits */
 /* Decompress the imploded data using uncoded literals and a sliding
    window (of size 2^(6+bdl) bytes). */
+
+static int explode_nolit( __GX__ OFT( struct huft *) tl,
+                                 OFT( struct huft *) td,
+                                 OFT( unsigned) bl,
+                                 OFT( unsigned) bd,
+                                 OFT( unsigned) bdl)
+#ifdef NO_PROTO
+     __GDEF
+struct huft *tl;        /* length and distance decoder tables */
+struct huft *td;
+unsigned bl;            /* number of bits decoded by tl[] and td[] */
+unsigned bd;
+unsigned bdl;           /* number of distance low bits */
+#endif /* def NO_PROTO */
 {
   zusz_t s;             /* bytes to decompress */
   register unsigned e;  /* table entry flag/number of extra bits */
@@ -556,9 +582,6 @@ unsigned bdl;           /* number of distance low bits */
 }
 
 
-
-int explode(__G)
-     __GDEF
 /* Explode an imploded compressed stream.  Based on the general purpose
    bit flag, decide on coded or uncoded literals, and an 8K or 4K sliding
    window.  Construct the literal (if any), length, and distance codes and
@@ -567,6 +590,11 @@ int explode(__G)
    of the stream.  The four routines are nearly identical, differing only
    in whether the literal is decoded or simply read in, and in how many
    bits are read in, uncoded, for the low distance bits. */
+
+int explode( __GX)
+#ifdef NO_PROTO
+     __GDEF
+#endif /* def NO_PROTO */
 {
   unsigned r;           /* return codes */
   struct huft *tb;      /* literal code table */

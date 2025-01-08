@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2017 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -1238,12 +1238,12 @@ static struct dsc$descriptor_s  pka_fnam =
 {   0, DSC$K_DTYPE_T, DSC$K_CLASS_S, NULL  };
 
 /* Expanded and resultant name storage. */
-static char exp_nam[NAMX_MAXRSS];
-static char res_nam[NAMX_MAXRSS];
+static char exp_nam[ NAMX_MAXRSS+ 1];
+static char res_nam[ NAMX_MAXRSS+ 1];
 
 /* Special ODS5-QIO-compatible name storage. */
 #ifdef NAML$C_MAXRSS
-static char sys_nam[NAML$C_MAXRSS];     /* Probably need less here. */
+static char sys_nam[NAML$C_MAXRSS+ 1];  /* Probably need less here. */
 #endif /* NAML$C_MAXRSS */
 
 #define PK_PRINTABLE_RECTYP(x)   ( (x) == FAT$C_VARIABLE \
@@ -1320,7 +1320,7 @@ static int create_qio_output(__GPRO)
 
         /* Special ODS5-QIO-compatible name storage. */
         nam.naml$l_filesys_name = sys_nam;
-        nam.naml$l_filesys_name_alloc = sizeof(sys_nam);
+        nam.naml$l_filesys_name_alloc = sizeof(sys_nam)- 1;
 
 #endif /* NAML$C_MAXRSS */
 
@@ -1331,9 +1331,9 @@ static int create_qio_output(__GPRO)
 
         /* Expanded and resultant name storage. */
         nam.NAMX_ESA = exp_nam;
-        nam.NAMX_ESS = sizeof(exp_nam);
+        nam.NAMX_ESS = sizeof(exp_nam)- 1;
         nam.NAMX_RSA = res_nam;
-        nam.NAMX_RSS = sizeof(res_nam);
+        nam.NAMX_RSS = sizeof(res_nam)- 1;
 
         if ( ERR(status = sys$parse(&fileblk)) )
         {
@@ -1560,7 +1560,7 @@ static int replace_rms_newversion(__GPRO)
      * use in the "extracting:/inflating:/..."  message (G.filename).
      */
     nam.NAMX_RSA = res_nam;
-    nam.NAMX_RSS = sizeof(res_nam);
+    nam.NAMX_RSS = sizeof(res_nam)- 1;
 
     NAMX_DNA_FNA_SET( *outfab)
     FAB_OR_NAML(*outfab, nam).FAB_OR_NAML_FNA = G.filename;
@@ -2372,8 +2372,8 @@ static int _flush_varlen(__G__ rawbuf, size, final_flag)
  *   sequences.  Should be used when extracting *text* files.
  */
 
-#define VT      0x0B
-#define FF      0x0C
+#define CHR_VT  0x0B    /* 11, Vertical tab. */
+#define CHR_FF  0x0C    /* 12, Form Feed. */
 
 /* The file is from MSDOS/OS2/NT -> handle CRLF as record end, throw out ^Z */
 
@@ -2391,14 +2391,14 @@ static int _flush_varlen(__G__ rawbuf, size, final_flag)
 
 /* Record delimiters */
 #ifdef undef
-#define RECORD_END(c, f)                                                \
-(    ( ORG_DOS || G.pInfo->textmode ) && c==CTRLZ                       \
-  || ( f == FAB$C_STMLF && c==LF )                                      \
-  || ( f == FAB$C_STMCR || ORG_DOS || G.pInfo->textmode ) && c==CR      \
-  || ( f == FAB$C_STM && (c==CR || c==LF || c==FF || c==VT) )           \
+#define RECORD_END(c, f) \
+(    ( ORG_DOS || G.pInfo->textmode ) && c==CHR_SUB \
+  || ( f == FAB$C_STMLF && c==CHR_LF ) \
+  || ( f == FAB$C_STMCR || ORG_DOS || G.pInfo->textmode ) && c==CHR_CR \
+  || ( f == FAB$C_STM && (c==CHR_CR || c==CHR_LF || c==CHR_FF || c==CHR_VT) ) \
 )
 #else
-# define  RECORD_END(c, f)     ((c) == LF || (c) == (CR))
+# define  RECORD_END(c, f)     ((c) == CHR_LF || (c) == (CHR_CR))
 #endif
 
 static unsigned find_eol(p, n, l)
@@ -2433,7 +2433,8 @@ static unsigned find_eol(p, n, l)
     if ( n > 1 )
     {
         *l = 1;
-        if ( ( q[0] == CR && q[1] == LF ) || ( q[0] == LF && q[1] == CR ) )
+        if ( ( q[0] == CHR_CR && q[1] == CHR_LF ) ||
+         ( q[0] == CHR_LF && q[1] == CHR_CR ) )
             *l = 2;
     }
 
@@ -2441,7 +2442,7 @@ static unsigned find_eol(p, n, l)
 }
 
 /* Record delimiters that must be put out */
-#define PRINT_SPEC(c)   ( (c)==FF || (c)==VT )
+#define PRINT_SPEC(c)   ( (c)==CHR_FF || (c)==CHR_VT )
 
 
 static int _flush_stream(__G__ rawbuf, size, final_flag)
@@ -2469,7 +2470,7 @@ static int _flush_stream(__G__ rawbuf, size, final_flag)
          *  If the last char of file was ^Z ( end-of-file in MSDOS ),
          *  we will see it now.
          */
-        if ( recsize==1 && locbuf[0] == CTRLZ )
+        if ( recsize==1 && locbuf[0] == CHR_SUB )
             return PK_COOL;
 
         return WriteRecord(__G__ locbuf, recsize);
@@ -2487,8 +2488,8 @@ static int _flush_stream(__G__ rawbuf, size, final_flag)
             recsize = loccnt - 1;
             complete = 1;
 
-            if ( (got_eol == CR && rawbuf[0] == LF) ||
-                 (got_eol == LF && rawbuf[0] == CR) )
+            if ( (got_eol == CHR_CR && rawbuf[0] == CHR_LF) ||
+                 (got_eol == CHR_LF && rawbuf[0] == CHR_CR) )
                 end = 1;
 
             got_eol = 0;
@@ -2574,7 +2575,7 @@ static int _flush_stream(__G__ rawbuf, size, final_flag)
 #ifdef undef
         if (uO.cflag)
             /* skip CR's at the beginning of record */
-            while (start < size && rawbuf[start] == CR)
+            while (start < size && rawbuf[start] == CHR_CR)
                 ++start;
 #endif
 
@@ -3413,7 +3414,7 @@ int set_direc_attribs(__G__ d)
 
     /* Special ODS5-QIO-compatible name storage. */
     nam.naml$l_filesys_name = sys_nam;
-    nam.naml$l_filesys_name_alloc = sizeof(sys_nam);
+    nam.naml$l_filesys_name_alloc = sizeof(sys_nam)- 1;
 
 # endif /* NAML$C_MAXRSS */
 
@@ -3423,9 +3424,9 @@ int set_direc_attribs(__G__ d)
 
     /* Expanded and resultant name storage. */
     nam.NAMX_ESA = exp_nam;
-    nam.NAMX_ESS = sizeof(exp_nam);
+    nam.NAMX_ESS = sizeof(exp_nam)- 1;
     nam.NAMX_RSA = res_nam;
-    nam.NAMX_RSS = sizeof(res_nam);
+    nam.NAMX_RSS = sizeof(res_nam)- 1;
 
     status = sys$parse(outfab);
     if ( ERR(status) )
@@ -3775,7 +3776,7 @@ int stamp_file(fname, modtime)
 
     /* Special ODS5-QIO-compatible name storage. */
     nam.naml$l_filesys_name = sys_nam;
-    nam.naml$l_filesys_name_alloc = sizeof(sys_nam);
+    nam.naml$l_filesys_name_alloc = sizeof(sys_nam)- 1;
 
 # endif /* NAML$C_MAXRSS */
 
@@ -3784,9 +3785,9 @@ int stamp_file(fname, modtime)
     FAB_OR_NAML(fileblk, nam).FAB_OR_NAML_FNS = strlen(fname);
 
     nam.NAMX_ESA = exp_nam;
-    nam.NAMX_ESS = sizeof(exp_nam);
+    nam.NAMX_ESS = sizeof(exp_nam)- 1;
     nam.NAMX_RSA = res_nam;
-    nam.NAMX_RSS = sizeof(res_nam);
+    nam.NAMX_RSS = sizeof(res_nam)- 1;
 
     if ( ERR(status = sys$parse(&fileblk)) )
     {
@@ -5529,7 +5530,7 @@ int check_for_newer(__G__ filenam)   /* return 1 if existing file newer or */
     /* 2008-07-12 SMS.
      * Special case for "." as a file name, not as the current directory.
      * Substitute ".;" to keep stat() from seeing a plain ".".
-    */
+     */
     if (strcmp(filenam, ".") == 0)
         filenam_stat = ".;";
     else
@@ -5555,13 +5556,24 @@ int check_for_newer(__G__ filenam)   /* return 1 if existing file newer or */
     fab.fab$l_xab = (char *) &xdat;
     fab.fab$l_fop = FAB$M_GET | FAB$M_UFO;
 
-    if (ERR(sys$open(&fab)))             /* open failure:  report exists and */
-        return EXISTS_AND_OLDER;         /*  older so new copy will be made  */
+    if (ERR(sys$open(&fab)))            /* Open failure.  Return */
+        return EXISTS_AND_OLDER;        /* exists-and-older to get new copy. */
+
     sys$numtim(&timbuf, &xdat.xab$q_cdt);
     fab.fab$l_xab = NULL;
 
+/* 2022-01-14 SMS.
+ * With fab$v_ufo/FAB$M_UFO, $OPEN does not set fab$w_ifi, but returns
+ * the I/O channel in fab$l_stv.  Because fab$w_ifi was not set, $CLOSE
+ * here always failed (unnoticed) with %RMS-F-IFI (0x18564).
+ * Apparently, $DASSGN does all the necessary work in this case.  (In
+ * principle, we could actually check the status returned by all these
+ * service functions, but why start now?)
+ */
     sys$dassgn(fab.fab$l_stv);
-    sys$close(&fab);   /* be sure file is closed and RMS knows about it */
+#if 0                   /* Pointless; always fails: */
+    sys$close(&fab);    /* be sure file is closed and RMS knows about it */
+#endif /* 0 */
 
 #ifdef USE_EF_UT_TIME
     if (G.extra_field &&
@@ -6169,16 +6181,19 @@ void version(__G)
 # endif /* def __GNUC__ [else] */
 
 # ifdef VMS_VERSION
-#  if defined(__alpha)
+#  if defined( __alpha)
       "OpenVMS",
-      (sprintf(buf, " (%s Alpha)", vms_vers), buf),
-#  elif defined(__ia64)
+      (sprintf( buf, " (%s Alpha)", vms_vers), buf),
+#  elif defined( __ia64) /* defined( __alpha) */
       "OpenVMS",
-      (sprintf(buf, " (%s IA64)", vms_vers), buf),
-#  else /* VAX */
+      (sprintf( buf, " (%s IA64)", vms_vers), buf),
+#  elif defined( __x86_64) /* defined( __x86_64) */
+      "OpenVMS",
+      (sprintf( buf, " (%s x86_64)", vms_vers), buf),
+#  else /* defined( __alpha) */
       (ver_maj >= 6) ? "OpenVMS" : "VMS",
-      (sprintf(buf, " (%s VAX)", vms_vers), buf),
-#  endif
+      (sprintf( buf, " (%s VAX)", vms_vers), buf),
+#  endif /* defined( __alpha) */
 # else /* def VMS_VERSION */
       "VMS",
       "",

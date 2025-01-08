@@ -1,8 +1,8 @@
 #==============================================================================
 # unix/Makefile
-# - For UnZip, fUnZip, UnZipSFX, and ZipInfo            Revised: 2018-12-06
+# - For UnZip, fUnZip, UnZipSFX, and ZipInfo            Revised: 2023-12-14
 #
-# Copyright (c) 2004-2018 Info-ZIP.  All rights reserved.
+# Copyright (c) 2004-2023 Info-ZIP.  All rights reserved.
 #
 # See the accompanying file LICENSE, version 2009-Jan-2 or later (the
 # contents of which are also included in zip.h) for terms of use.  If,
@@ -124,7 +124,7 @@
 GENERIC_TARGETS1 = generic  generic_pkg  config_flags
 GENERIC_TARGETS2 = generic1  generic2  generic3
 
-MISC_TARGETS = clean  clean_bzip2  clean_docs  clean_exe  dashv
+MISC_TARGETS = clean  clean_bzip2  clean_docs  clean_exe  clean_unzip  dashv
 
 SYS_TARGETS01 = 386i 3Bx 7300 7300_gcc amdahl amdahl_eft apollo aviion
 SYS_TARGETS02 = bsd bsdi bsdi_noasm bull coherent convex cray cray_opt
@@ -188,12 +188,18 @@ help:
 	@echo '(or "make -f unix/Makefile generic CC=gcc" (to use "gcc")),'
 	@echo 'as "generic" should automatically set the proper flags.'
 	@echo ''
-	@echo 'Use the "clean" target to delete any product files before'
-	@echo 'using one of the other "make" targets.  The generic targets'
-	@echo 'use the unix/configure script to generate an intermediate'
-	@echo '"flags" file which is used by unix/Makefile.  For debugging'
-	@echo 'purposes, the "config_flags" target can be used to generate'
-	@echo 'the "flags" file only.'
+	@echo 'Use the "clean" target to delete all product files before'
+	@echo 'using one of the other "make" targets.  Use the "clean_bzip2"'
+	@echo 'target to delete only the bzip2 product files, or'
+	@echo '"clean_unzip" to delete only the UnZip product files'
+	@echo '(leaving any bzip2 product files).'
+	@echo ''
+	@echo 'The generic targets use the unix/configure script to generate'
+	@echo 'an intermediate "flags" file which is used by unix/Makefile.'
+	@echo ''
+	@echo 'For debugging purposes, the "config_flags" target can be used'
+	@echo 'to generate the "flags" file only.  Then edit the "flags"'
+	@echo 'file as desired before using a generic target.'
 	@echo ''
 	@echo 'Use the "docs" target to make the plain-text "man" output'
 	@echo 'files.  These are the files, like "unzip.txt", that are'
@@ -215,8 +221,9 @@ help:
 	@echo '  any success at all).  Use "make -f unix/Makefile list" to'
 	@echo '  get a list of valid targets.'
 	@echo ''
-	@echo '  Always do "make -f unix/Makefile clean clean_bzip2" before'
-	@echo '  attempting to build UnZip using a different target.'
+	@echo '  Always do "make -f unix/Makefile clean" before attempting'
+	@echo '  to build UnZip using a different target.  (Or "clean_unzip"'
+	@echo '  if an existing bzip2 build can be used with the new target.)'
 	@echo ''
 	@echo '  If the "generic" target fails, you might try an older generic'
 	@echo '  target that is now called "generic1".'
@@ -1282,7 +1289,22 @@ $(PROD)/flags_bz: $(PROD)/flags
 #  - Used when incompatible build options (or source changes) are required.
 #----------------------------------------------------------------------------
 
-clean:
+clean: clean_bzip2 clean_unzip
+
+clean_bzip2:
+	@if [ -f bzip2/$(MK_BZ) ]; then \
+          ( cd bzip2; make -f $(MK_BZ) clean ); \
+        else \
+          echo "Expected bzip2 \"make\" file not found: bzip2/$(MK_BZ)"; \
+        fi;
+
+clean_docs:
+	rm -f $(UNZIP_DOCS)
+
+clean_exe:
+	rm -f $(UNZIP_PPGMS) $(PPGM_ZINFO)
+
+clean_unzip:
 	@if sh unix/unsafe_prod.sh "$(PROD)"; then \
           echo "Won't clean absolute (/x) or rising (../) PROD: $(PROD)"; \
         else \
@@ -1299,19 +1321,6 @@ clean:
           rm -r "$(PROD)" ; \
         fi
 	rm -rf $(PKGDIR)
-
-clean_bzip2:
-	@if [ -f bzip2/$(MK_BZ) ]; then \
-          ( cd bzip2; make -f $(MK_BZ) clean ); \
-        else \
-          echo "Expected bzip2 \"make\" file not found: bzip2/$(MK_BZ)"; \
-        fi;
-
-clean_exe:
-	rm -f $(UNZIP_PPGMS) $(PPGM_ZINFO)
-
-clean_docs:
-	rm -f $(UNZIP_DOCS)
 
 #----------------------------------------------------------------------------
 #  Build rules: Installation-related

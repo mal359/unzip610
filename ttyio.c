@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2014 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -360,9 +360,11 @@ int tt_getch()
 /*
  * Turn echo off for file descriptor f.  Assumes that f is a tty device.
  */
-void Echoff(__G__ f)
+void Echoff( __GX__ OFT( int) f)
+#ifdef NO_PROTO
     __GDEF
     int f;                    /* file descriptor for which to turn echo off */
+#endif /* def NO_PROTO */
 {
     struct sgttyb sg;         /* tty device structure */
 
@@ -375,8 +377,10 @@ void Echoff(__G__ f)
 /*
  * Turn echo back on for file descriptor echofd.
  */
-void Echon(__G)
+void Echon( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     struct sgttyb sg;         /* tty device structure */
 
@@ -407,9 +411,11 @@ void Echon(__G)
 
 #if (defined(TIOCGWINSZ) && !defined(M_UNIX))
 
-int screensize(tt_rows, tt_cols)
+int screensize( OFT( int *) tt_rows, OFT( int *) tt_cols)
+#ifdef NO_PROTO
     int *tt_rows;
     int *tt_cols;
+#endif /* def NO_PROTO */
 {
     struct winsize wsz;
 #ifdef DEBUG_WINSZ
@@ -493,9 +499,11 @@ int screensize(tt_rows, tt_cols)
 /*
  * Get a character from the given file descriptor without echo or newline.
  */
-int zgetch(__G__ f)
+int zgetch( __GX__ OFT( int) f)
+#ifdef NO_PROTO
     __GDEF
     int f;                      /* file descriptor from which to read */
+#endif /* def NO_PROTO */
 {
 #if (defined(USE_SYSV_TERMIO) || defined(USE_POSIX_TERMIOS))
     char oldmin, oldtim;
@@ -607,11 +615,13 @@ int zgetch(__G__ f)
 /* This is the getp() function for all systems (with TTY type user interface)
  * that supply a working `non-echo' getch() function for "raw" console input.
  */
-char *getp(__G__ m, p, n)
+char *getp( __GX__ OFT( ZCONST char *) m, OFT( char *) p, OFT( int) n)
+#ifdef NO_PROTO
     __GDEF
     ZCONST char *m;             /* prompt for password */
     char *p;                    /* return value: line input */
     int n;                      /* bytes available in p[] */
+#endif /* def NO_PROTO */
 {
     char c;                     /* one-byte buffer for read() to use */
     int i;                      /* number of characters input */
@@ -659,11 +669,13 @@ char *getp(__G__ m, p, n)
 #  endif
 #endif
 
-char *getp(__G__ m, p, n)
+char *getp( __GX__ OFT( ZCONST char *) m, OFT( char *) p, OFT( int) n)
+#ifdef NO_PROTO
     __GDEF
     ZCONST char *m;             /* prompt for password */
     char *p;                    /* return value: line input */
     int n;                      /* bytes available in p[] */
+#endif /* def NO_PROTO */
 {
     char c;                     /* one-byte buffer for read() to use */
     int i;                      /* number of characters input */
@@ -708,7 +720,6 @@ char *getp(__G__ m, p, n)
 } /* end function getp() */
 
 #endif /* ATH_BEO_UNX || __MINT__ */
-
 
 
 #if (defined(VMS) || defined(CMS_MVS))
@@ -761,6 +772,9 @@ char *getp(__G__ m, p, n)
 } /* end function getp() */
 
 #endif /* VMS || CMS_MVS */
+
 #endif /* ?HAVE_WORKING_GETCH */
+
 #endif /* def IZ_CRYPT_ANY */
+
 #endif /* defined(IZ_CRYPT_ANY) || (defined(UNZIP) && !defined(FUNZIP)) */

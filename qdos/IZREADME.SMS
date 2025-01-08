@@ -584,7 +584,7 @@ compiled programs and c68 programs using nul as stdin.
 Note 3
 ------
 
-version number incremented to 2.0.1a and 5.12a to accomodate Erling
+version number incremented to 2.0.1a and 5.12a to accommodate Erling
 Jacobsen's exit message requirements
 
 version number incremented to Zip 2.0.1b to fix bug on zipping files

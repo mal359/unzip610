@@ -1,7 +1,7 @@
 
-Info-Zip UnZip -- Source kit.  Version 6.1c25 (pre-BETA)  2018-12-20.
+Info-Zip UnZip -- Source kit.  Version 6.1c25 (pre-BETA)  2023-12-14.
 
-Kit contents copyright (c) 1990-2018 Info-ZIP.  All rights reserved.
+Kit contents copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
    License terms in: LICENSE
 Exceptions:
     aes_wg/ Copyright (c) 2002, Dr Brian Gladman.  All rights reserved.

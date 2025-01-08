@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2018 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -31,8 +31,8 @@
 /**************************************************/
 
 # ifdef BETA
-#  define UZ_BETALEVEL      "c25-BETA"
-#  define UZ_VERSION_DATE   "2018-12-20"        /* Internal beta version. */
+#  define UZ_BETALEVEL      "c25c-BETA"
+#  define UZ_VERSION_DATE   "2023-12-15"        /* Internal beta version. */
 # else
 #  define UZ_BETALEVEL      ""
 #  define UZ_VERSION_DATE   "2018-XX-XX"        /* Official release version. */
@@ -46,7 +46,7 @@
 
 # define UZ_PATCHLEVEL  0
 
-# define UZ_VER_STRING  "6.1c25"        /* Sync with Version numbers! */
+# define UZ_VER_STRING  "6.1c25c"       /* Sync with Version numbers! */
 
 # ifndef IZ_COMPANY_NAME
 #  define IZ_COMPANY_NAME "Info-ZIP"

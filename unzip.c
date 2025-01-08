@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2018 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -99,7 +99,7 @@
 typedef struct _sign_info
     {
         struct _sign_info *previous;
-        void (*sighandler)(int);
+        void (*sighandler)(OFT( int));
         int sigtype;
     } savsigs_info;
 # endif /* (defined(REENTRANT) && !defined(NO_EXCEPT_SIGNALS)) */
@@ -404,11 +404,11 @@ static ZCONST char Far ZipInfoExample[] = "*, ?, [] (e.g., \"[a-j]*.zip\")";
 /* Used in vms/cmdline.c, so not static in VMS CLI.  "/lic" v. "--lic". */
 ZCONST char Far ZipInfoUsageLine1[] = "\
 Info-ZIP ZipInfo %s (%s)%s\n\
- Copyright (c) 1990-2018 Info-ZIP.  License: unzip /license\n";
+ Copyright (c) 1990-2023 Info-ZIP.  License: unzip /license\n";
 #  else /* def VMSCLI */
 static ZCONST char Far ZipInfoUsageLine1[] = "\
 Info-ZIP ZipInfo %s (%s)%s\n\
- Copyright (c) 1990-2018 Info-ZIP.  License: unzip --license\n";
+ Copyright (c) 1990-2023 Info-ZIP.  License: unzip --license\n";
 #  endif /* def VMSCLI [else] */
 
 static ZCONST char Far ZipInfoUsageLine2[] = "\
@@ -780,11 +780,11 @@ static ZCONST char Far EnvGO32TMP[] = "GO32TMP";
 /* Used in vms/cmdline.c, so not static in VMS CLI.  "/lic" v. "--lic". */
 ZCONST char Far UnzipUsageLine1[] = "\
 Info-ZIP UnZip %s (%s)%s\n\
- Copyright (c) 1990-2018 Info-ZIP.  License: unzip /license\n";
+ Copyright (c) 1990-2023 Info-ZIP.  License: unzip /license\n";
 #  else /* def VMSCLI */
 static ZCONST char Far UnzipUsageLine1[] = "\
 Info-ZIP UnZip %s (%s)%s\n\
- Copyright (c) 1990-2018 Info-ZIP.  License: unzip --license\n";
+ Copyright (c) 1990-2023 Info-ZIP.  License: unzip --license\n";
 #  endif /* def VMSCLI [else] */
 
 static ZCONST char Far UnzipVersionLine[] = "\
@@ -1254,10 +1254,13 @@ static ZCONST struct option_struct far options_zipinfo[] =
 /*****************************/
 /*  main() / UzpMain() stub  */
 /*****************************/
+/* return PK-type error code (except under VMS) */
 
-int MAIN(argc, argv)   /* return PK-type error code (except under VMS) */
+int MAIN( OFT( int) argc, OFT( char **) argv)
+#ifdef NO_PROTO
     int argc;
     char *argv[];
+#endif /* def NO_PROTO */
 {
     int r;
 
@@ -1281,10 +1284,12 @@ int MAIN(argc, argv)   /* return PK-type error code (except under VMS) */
 /*  Primary UnZip entry point  */
 /*******************************/
 
-int unzip(__G__ argc, argv)
+int unzip( __GX__ OFT( int) argc, OFT( char **) argv)
+#ifdef NO_PROTO
     __GDEF
     int argc;
     char *argv[];
+#endif /* def NO_PROTO */
 {
 /* Ignore argv[0] for DLL or object library.
  * (Must use "-Z" for ZipInfo mode.)
@@ -1859,12 +1864,17 @@ cleanup_and_exit:
 /* Function setsignalhandler() */
 /*******************************/
 
-static int setsignalhandler(__G__ p_savedhandler_chain, signal_type,
-                            newhandler)
+static int setsignalhandler( __GX__ OFT( savsigs_info **) p_savedhandler_chain,
+                                    OFT( int) signal_type,
+#ifdef PROTO
+                                    void (*newhandler)(int))
+#else /* def PROTO */
+                                    newhandler)
     __GDEF
     savsigs_info **p_savedhandler_chain;
     int signal_type;
-    void (*newhandler)(int);
+    void (*newhandler);
+#endif /* def PROTO [else] */
 {
     savsigs_info *savsig;
 
@@ -1906,11 +1916,15 @@ static int setsignalhandler(__G__ p_savedhandler_chain, signal_type,
 /* Function uz_opts() */
 /**********************/
 
-int uz_opts(__G__ opts, pargc, pargv)
+int uz_opts( __GX__ OFT( ZCONST struct option_struct *) opts,
+                    OFT( int *) pargc,
+                    OFT( char ***) pargv)
+#ifdef NO_PROTO
     __GDEF
     ZCONST struct option_struct *opts;
     int *pargc;
     char ***pargv;
+#endif /* def NO_PROTO */
 {
     char **args;
     int argc;
@@ -2994,9 +3008,11 @@ int uz_opts(__G__ opts, pargc, pargv)
  * show_env(): Display option environment variables.
  */
 
-static void show_env_heading( __G__ heading)
+static void show_env_heading( __GX__ OFT( int *) heading)
+#ifdef NO_PROTO
  __GDEF
  int *heading;
+#endif /* def NO_PROTO */
 {
     /* Display the heading once. */
     if (*heading == 0)
@@ -3009,9 +3025,11 @@ static void show_env_heading( __G__ heading)
 #   ifndef VMSCLI
 static                  /* Used in vms/cmdline.c, so not static in VMS CLI. */
 #   endif /* ndef VMSCLI */
-void show_env( __G__ non_null_only)
+void show_env( __GX__ OFT( int) non_null_only)
+#ifdef NO_PROTO
  __GDEF
  int non_null_only;
+#endif /* def NO_PROTO */
 {
     int heading = 0;
     char *envptr;
@@ -3159,11 +3177,13 @@ void show_env( __G__ non_null_only)
 #   define SFXICO2 ""
 #  endif
 
-/* SFX Usage guide. */
+/* SFX Usage guide. */  /* return PK-type error code */
 
-int usage(__G__ u_err)   /* return PK-type error code */
+int usage( __GX__ OFT( int) u_err)
+#ifdef NO_PROTO
     __GDEF
     int u_err;
+#endif /* def NO_PROTO */
 {
     int flag = (u_err? 1 : 0);
 
@@ -3209,11 +3229,13 @@ int usage(__G__ u_err)   /* return PK-type error code */
 #    define QUOTS ""
 #  endif /* def VMS [else] */
 
-/* Normal (Non-SFX) Usage guide. */
+/* Normal (Non-SFX) Usage guide. */  /* return PK-type error code */
 
-int usage(__G__ u_err)   /* return PK-type error code */
+int usage( __GX__ OFT( int) u_err)
+#ifdef NO_PROTO
     __GDEF
     int u_err;
+#endif /* def NO_PROTO */
 {
     int flag = (u_err? 1 : 0);
 
@@ -3286,14 +3308,16 @@ int usage(__G__ u_err)   /* return PK-type error code */
 
 
 /* Print license to stdout. */
-void show_license(__G)
+void show_license( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     extent i;             /* counter for license array */
 
     /* license array */
     static ZCONST char *text[] = {
-  "Copyright (c) 1990-2018 Info-ZIP.  All rights reserved.",
+  "Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.",
   "",
   "This is version 2009-Jan-02 of the Info-ZIP license.",
   "",
@@ -3364,8 +3388,10 @@ void show_license(__G)
 # ifndef SFX
 
 /* Print extended help to stdout. */
-static void help_extended(__G)
+static void help_extended( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     extent i;             /* counter for help array */
 
@@ -3649,8 +3675,11 @@ static void help_extended(__G)
 
 
 /* Print available options. */
-void show_options(__G)
+
+void show_options( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     int i;
     size_t lolen;
@@ -3734,8 +3763,10 @@ Available %s options:\n", CMD_NAME));
 
 
 /* Print processed command line. */
-void show_commandline( args)
+void show_commandline( OFT( char **) args)
+#ifdef NO_PROTO
     char *args[];
+#endif /* def NO_PROTO */
 {
 #  define MAX_CARG_LEN (WSIZE>>2)
 
@@ -3818,8 +3849,10 @@ char *UZ_EXP ZiDclStr( OFT( void))
 /* Function show_version_info() */
 /********************************/
 
-void show_version_info(__G)
+void show_version_info( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     if (uO.qflag > 3)                           /* "-qqqqvv" or "-vq" */
     {
@@ -4290,12 +4323,19 @@ static ZCONST char Far no_arg_files_err[] = "argument files not enabled\n";
 
 
 /* copy error, option name, and option description if any to buf */
-static int optionerr( opts, buf, err, optind, islong)
+
+static int optionerr( OFT( ZCONST struct option_struct *) opts,
+                      OFT( char *) buf,
+                      OFT( ZCONST char Far *) err,
+                      OFT( int) optind,
+                      OFT( int) islong)
+#ifdef NO_PROTO
   ZCONST struct option_struct *opts;
   char *buf;
   ZCONST char Far *err;
   int optind;
   int islong;
+#endif /* def NO_PROTO */
 {
   char optname[50];
 
@@ -4326,10 +4366,12 @@ static int optionerr( opts, buf, err, optind, islong)
  * allocated with malloc or by NULL if last argument so that free_args
  * will properly work.
  */
-char **copy_args(__G__ args, max_args)
+char **copy_args( __GX__ OFT( char **) args, OFT( int) max_args)
+#ifdef NO_PROTO
   __GDEF
   char **args;
   int max_args;
+#endif /* def NO_PROTO */
 {
   int j;
   char **new_args;
@@ -4369,9 +4411,11 @@ char **copy_args(__G__ args, max_args)
 
 
 /* count args - count args in argv like array */
-int arg_count(__G__ args)
+int arg_count( __GX__ OFT( char **) args)
+#ifdef NO_PROTO
   __GDEF
   char **args;
+#endif /* def NO_PROTO */
 {
   int i;
 
@@ -4386,8 +4430,10 @@ int arg_count(__G__ args)
 
 
 /* free args - free args created with one of these functions */
-int free_args( args)
+int free_args( OFT( char **) args)
+#ifdef NO_PROTO
   char **args;
+#endif /* def NO_PROTO */
 {
   int i;
 
@@ -4414,12 +4460,17 @@ int free_args( args)
  * argv but only on args allocated with malloc.
  */
 
-int insert_arg(__G__ pargs, arg, at_arg, free_args)
+int insert_arg( __GX__ OFT( char ***) pargs,
+                       OFT( ZCONST char *) arg,
+                       OFT( int) at_arg,
+                       OFT( int) free_args)
+#ifdef NO_PROTO
   __GDEF
   char ***pargs;
   ZCONST char *arg;
   int at_arg;
   int free_args;
+#endif /* def NO_PROTO */
 {
   char *newarg = NULL;
   char **args;
@@ -4515,8 +4566,16 @@ int insert_arg(__G__ pargs, arg, at_arg, free_args)
  *                   value lists.
  *    depth        - recursion depth (0 at top level, 1 or more in arg files)
  */
-static unsigned long get_shortopt(__G__ opts, args, argnum, optchar,
-                                  negated, value, option_num, depth)
+static unsigned long get_shortopt( __GX__
+                                    OFT( ZCONST struct option_struct *) opts,
+                                    OFT( ZCONST char **) args,
+                                    OFT( int) argnum,
+                                    OFT( int *) optchar,
+                                    OFT( int *) negated,
+                                    OFT( char **) value,
+                                    OFT( int *) option_num,
+                                    OFT( int) depth)
+#ifdef NO_PROTO
   __GDEF
   ZCONST struct option_struct *opts;
   ZCONST char **args;
@@ -4526,6 +4585,7 @@ static unsigned long get_shortopt(__G__ opts, args, argnum, optchar,
   char **value;
   int *option_num;
   int depth;
+#endif /* def NO_PROTO */
 {
   ZCONST char *shortopt;
   size_t clen;
@@ -4838,8 +4898,16 @@ static unsigned long get_shortopt(__G__ opts, args, argnum, optchar,
  * Parameters same as for get_shortopt.
  */
 
-static unsigned long get_longopt(__G__ opts, args, argnum, optchar,
-                                 negated, value, option_num, depth)
+static unsigned long get_longopt( __GX__
+                                   OFT( ZCONST struct option_struct *) opts,
+                                   OFT( ZCONST char **) args,
+                                   OFT( int) argnum,
+                                   OFT( int *) optchar,
+                                   OFT( int *) negated,
+                                   OFT( char **) value,
+                                   OFT( int *) option_num,
+                                   OFT( int) depth)
+#ifdef NO_PROTO
   __GDEF
   ZCONST struct option_struct *opts;
   ZCONST char **args;
@@ -4849,6 +4917,7 @@ static unsigned long get_longopt(__G__ opts, args, argnum, optchar,
   char **value;
   int *option_num;
   int depth;
+#endif /* def NO_PROTO */
 {
   char *longopt;
   char *lastchr;
@@ -5262,8 +5331,17 @@ static unsigned long get_longopt(__G__ opts, args, argnum, optchar,
  *
  */
 
-unsigned long get_option(__G__ opts, pargs, argc, argnum, optchar, value,
-                         negated, first_nonopt_arg, option_num, recursion_depth)
+unsigned long get_option( __GX__ OFT( ZCONST struct option_struct *) opts,
+                                 OFT( char ***) pargs,
+                                 OFT( int *) argc,
+                                 OFT( int *) argnum,
+                                 OFT( int *) optchar,
+                                 OFT( char **) value,
+                                 OFT( int *) negated,
+                                 OFT( int *) first_nonopt_arg,
+                                 OFT( int *) option_num,
+                                 OFT( int) recursion_depth)
+#ifdef NO_PROTO
   __GDEF
   ZCONST struct option_struct *opts;
   char ***pargs;
@@ -5275,6 +5353,7 @@ unsigned long get_option(__G__ opts, pargs, argc, argnum, optchar, value,
   int *first_nonopt_arg;
   int *option_num;
   int recursion_depth;
+#endif /* def NO_PROTO */
 {
   char **args;
   unsigned long option_ID;
@@ -5649,8 +5728,10 @@ unsigned long get_option(__G__ opts, pargs, argc, argnum, optchar, value,
 #  include <unistd.h>
 # endif /* ndef VMS */
 
-USER_PROGRESS_CLASS void user_progress( arg)
+USER_PROGRESS_CLASS void user_progress( OFT( int) arg)
+#ifdef NO_PROTO
 int arg;
+#endif /* def NO_PROTO */
 {
   /* VMS Ctrl/T automatically puts out a line like:
    * ALP::_FTA24: 07:59:43 ZIP       CPU=00:00:59.08 PF=2320 IO=52406 MEM=333

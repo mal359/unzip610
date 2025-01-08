@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2018 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -410,9 +410,12 @@ static ZCONST char Far InfoInconsistentJavaCAFE[] =
 /*******************************************/
 /*  Function allocate_name_match_arrays()  */
 /*******************************************/
+/* Return PK-type error code. */
 
-static int allocate_name_match_arrays( __G) /* Return PK-type error code. */
+static int allocate_name_match_arrays( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     int error = PK_OK;
 
@@ -456,10 +459,13 @@ static int allocate_name_match_arrays( __G) /* Return PK-type error code. */
 /*  Function check_unmatched_names()  */
 /**************************************/
 
-static int check_unmatched_names( __G__ check, err_in_arch)
+static int check_unmatched_names( __GX__ OFT( int) check,
+                                         OFT( int) err_in_arch)
+#ifdef NO_PROTO
   __GDEF
   int check;
   int err_in_arch;
+#endif /* def NO_PROTO */
 {
   int error = PK_OK;                    /* Return PK-type error code. */
   unsigned i;
@@ -526,8 +532,10 @@ static int check_unmatched_names( __G__ check, err_in_arch)
 /*  Function match_include_exclude()  */
 /**************************************/
 
-static int match_include_exclude( __G)
+static int match_include_exclude( __GX)
+#ifdef NO_PROTO
   __GDEF
+#endif /* def NO_PROTO */
 {
   int do_this_file = -1;                /* Undetermined. */
   unsigned i;
@@ -602,9 +610,12 @@ static int match_include_exclude( __G)
 /*****************************/
 /*  Function name_abs_rel()  */
 /*****************************/
+/* Return PK-type error code. */
 
-static int name_abs_rel( __G)           /* Return PK-type error code. */
+static int name_abs_rel( __GX)
+#ifdef NO_PROTO
   __GDEF
+#endif /* def NO_PROTO */
 {
   int error = PK_OK;
 
@@ -637,9 +648,12 @@ static int name_abs_rel( __G)           /* Return PK-type error code. */
 /******************************/
 /*  Function name_abs_relw()  */
 /******************************/
+/* Return PK-type error code. */
 
-static int name_abs_relw( __G)          /* Return PK-type error code. */
+static int name_abs_relw( __GX)
+#ifdef NO_PROTO
   __GDEF
+#endif /* def NO_PROTO */
 {
   int error = PK_OK;
 
@@ -672,9 +686,12 @@ static int name_abs_relw( __G)          /* Return PK-type error code. */
 /**************************/
 /*  Function name_junk()  */
 /**************************/
+/* Return PK-type error code. */
 
-static int name_junk( __G)              /* Return PK-type error code. */
+static int name_junk( __GX)
+#ifdef NO_PROTO
   __GDEF
+#endif /* def NO_PROTO */
 {
   int error = PK_OK;                    /* (What could go wrong?) */
   char *slp;
@@ -739,9 +756,12 @@ static int name_junk( __G)              /* Return PK-type error code. */
 /***************************/
 /*  Function name_junkw()  */
 /***************************/
+/* Return PK-type error code. */
 
-static int name_junkw( __G)             /* Return PK-type error code. */
+static int name_junkw( __GX)
+#ifdef NO_PROTO
   __GDEF
+#endif /* def NO_PROTO */
 {
   int error = PK_OK;                    /* (What could go wrong?) */
   wchar_t *wslp;
@@ -1127,10 +1147,12 @@ static int TestExtraField(__G__ ef_buf, ef_len)
 /*  Function ef_scan_for_cafe()  */
 /*********************************/
 
-static void ef_scan_for_cafe( __G__ ef_buf, ef_len)
+static void ef_scan_for_cafe( __GX__ OFT( uch *) ef_buf, OFT( long) ef_len)
+#ifdef NO_PROTO
   __GDEF
   uch *ef_buf;
   long ef_len;
+#endif /* def NO_PROTO */
 {
   /* 2012-05-20 SMS.
    * Accommodation for Java "jar" archives whose
@@ -1203,13 +1225,21 @@ static void ef_scan_for_cafe( __G__ ef_buf, ef_len)
  * but length is in xlhdr.file_comment_length).  cmnt may be NULL, if
  * the user is not interested.
  */
-static int ef_scan_for_stream( ef_ptr, ef_len, btmp_siz, btmp, xlhdr, cmnt)
+
+static int ef_scan_for_stream( OFT( ZCONST uch *) ef_ptr,
+                               OFT( long) ef_len,
+                               OFT( int *) btmp_siz,
+                               OFT( uch *) btmp,
+                               OFT( ext_local_file_hdr *) xlhdr,
+                               OFT( char **) cmnt)
+#ifdef NO_PROTO
     ZCONST uch *ef_ptr;                 /* Buffer containing extra field. */
     long ef_len;                        /* Total length of extra field. */
     int *btmp_siz;                      /* Size of bitmap array. */
     uch *btmp;                          /* Bitmap (array). */
     ext_local_file_hdr *xlhdr;          /* Extended local header data. */
     char **cmnt;                        /* File comment. */
+#endif /* def NO_PROTO */
 {
   unsigned eb_id;
   long eb_len;
@@ -1370,9 +1400,12 @@ static int ef_scan_for_stream( ef_ptr, ef_len, btmp_siz, btmp, xlhdr, cmnt)
 /*********************************/
 /*  Function extract_dest_dir()  */
 /*********************************/
+/* Return PK-type error code. */
 
-static int extract_dest_dir( __G)       /* Return PK-type error code. */
+static int extract_dest_dir( __GX)
+#ifdef NO_PROTO
   __GDEF
+#endif /* def NO_PROTO */
 {
   int error = PK_OK;
 
@@ -1496,8 +1529,10 @@ static int extract_dest_dir( __G)       /* Return PK-type error code. */
 /*  Function unkn_cmpr_mthd() */
 /******************************/
 
-static int unkn_cmpr_mthd( __G)
+static int unkn_cmpr_mthd( __GX)
+#ifdef NO_PROTO
   __GDEF
+#endif /* def NO_PROTO */
 {
   /* Return 0: supported compression method
    *        1: unsupported compression method
@@ -1548,9 +1583,12 @@ static int unkn_cmpr_mthd( __G)
 /***************************/
 /*  Function store_info()  */
 /***************************/
+/* Return 0 if ok, non-zero if skipping. */
 
-static int store_info(__G)      /* Return 0 if ok, non-zero if skipping. */
+static int store_info( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
 /*---------------------------------------------------------------------------
     Check central directory info for version/compatibility requirements.
@@ -1675,9 +1713,11 @@ static int store_info(__G)      /* Return 0 if ok, non-zero if skipping. */
 /* Function set_deferred_symlink() */
 /***********************************/
 
-static void set_deferred_symlink(__G__ slnk_entry)
+static void set_deferred_symlink( __GX__ OFT( slinkentry *) slnk_entry)
+#ifdef NO_PROTO
     __GDEF
     slinkentry *slnk_entry;
+#endif /* def NO_PROTO */
 {
     int errno1 = 0;
     int sts1;
@@ -1834,10 +1874,12 @@ static void set_deferred_symlink(__G__ slnk_entry)
 /************************************/
 /* Function set_deferred_symlinks() */
 /************************************/
+/* Return PK-type error code. */
 
-static int set_deferred_symlinks(__G)   /* Return PK-type error code. */
-
+static int set_deferred_symlinks(__GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
   int error = PK_OK;                    /* (What could go wrong?) */
 
@@ -1912,10 +1954,13 @@ static int Cdecl dircompw( OFT( ZCONST zvoid *) a, OFT( ZCONST zvoid *) b)
 /*  Function aes_wg_prep()  */
 /****************************/
 
-int aes_wg_prep( __G__ temp_cmpr_mthd_p, temp_sto_size_decr_p )
+int aes_wg_prep( __GX__ OFT( ush *) temp_cmpr_mthd_p,
+                        OFT( int *) temp_sto_size_decr_p)
+#ifdef NO_PROTO
   __GDEF
   ush *temp_cmpr_mthd_p;
   int *temp_sto_size_decr_p;
+#endif /* def NO_PROTO */
 {
   int error = PK_OK;                    /* Return PK-type error code. */
 
@@ -1966,9 +2011,11 @@ int aes_wg_prep( __G__ temp_cmpr_mthd_p, temp_sto_size_decr_p )
 /*  Function size_check()  */
 /***************************/
 
-int size_check( __G__ real_stored_size_decr)
+int size_check( __GX__ OFT( int) real_stored_size_decr)
+#ifdef NO_PROTO
   __GDEF
   int real_stored_size_decr;
+#endif /* def NO_PROTO */
 {
   int error = PK_OK;                    /* Return PK-type error code. */
 
@@ -2001,8 +2048,10 @@ int size_check( __G__ real_stored_size_decr)
 /*  Function password_check()  */
 /*******************************/
 
-int password_check( __G)
+int password_check( __GX)
+#ifdef NO_PROTO
   __GDEF
+#endif /* def NO_PROTO */
 {
   int error;                            /* Return PK-type error code. */
 
@@ -2036,8 +2085,10 @@ int password_check( __G)
 /*  Function detect_apl_dbl()  */
 /*******************************/
 
-static int detect_apl_dbl( __G)
+static int detect_apl_dbl( __GX)
+#ifdef NO_PROTO
   __GDEF
+#endif /* def NO_PROTO */
 {
   int error = PK_OK;                    /* Return PK-type error code. */
 
@@ -2133,8 +2184,11 @@ static int detect_apl_dbl( __G)
 /********************************/
 /*  Function backslash_slash()  */
 /********************************/
-static int backslash_slash( __G)
+
+static int backslash_slash( __GX)
+#ifdef NO_PROTO
   __GDEF
+#endif /* def NO_PROTO */
 {
   int error = PK_OK;                    /* Return PK-type error code. */
 
@@ -2170,10 +2224,14 @@ static int backslash_slash( __G)
 /*********************************/
 /*  Function backslash_slashw()  */
 /*********************************/
-static int backslash_slashw( __G)
+/* Return PK-type error code. */
+
+static int backslash_slashw( __GX)
+#ifdef NO_PROTO
   __GDEF
+#endif /* def NO_PROTO */
 {
-  int error = PK_OK;                    /* Return PK-type error code. */
+  int error = PK_OK;
 
   if ((G.pInfo->hostnum == FS_FAT_) && !MBSCHR(G.filename, '/'))
   {
@@ -2210,12 +2268,17 @@ static int backslash_slashw( __G)
 /*  Function extract_test_trailer()  */
 /*************************************/
 
-static int extract_test_trailer(__G__ n_fil, n_bad_pwd, n_skip, err_in_arch)
+static int extract_test_trailer( __GX__ OFT( ulg) n_fil,
+                                        OFT( ulg) n_bad_pwd,
+                                        OFT( ulg) n_skip,
+                                        OFT( int) err_in_arch)
+#ifdef NO_PROTO
   __GDEF
   ulg n_fil;
   ulg n_bad_pwd;
   ulg n_skip;
   int err_in_arch;              /* Return PK-type error code. */
+#endif /* def NO_PROTO */
 {
 
   if (uO.tflag)
@@ -2301,10 +2364,12 @@ static int extract_test_trailer(__G__ n_fil, n_bad_pwd, n_skip, err_in_arch)
 # define TYPE_EBC   "[ebcdic]";         /* Not actually used? */
 #endif
 
-void action_msg( __G__ action, flag)
+void action_msg( __GX__ OFT( ZCONST char *) action, OFT( int) flag)
+#ifdef NO_PROTO
   __GDEF
   ZCONST char *action;
   int flag;                             /* 0: Name only; 1: Name + [type]. */
+#endif /* def NO_PROTO */
 {
   char *str1;
   char *str2;
@@ -2373,8 +2438,12 @@ void action_msg( __G__ action, flag)
 #endif
 
 
-static int extract_or_test_member(__G)  /* return PK-type error code */
+/* return PK-type error code */
+
+static int extract_or_test_member( __GX)
+#ifdef NO_PROTO
      __GDEF
+#endif /* def NO_PROTO */
 {
     register int b;
     int r;
@@ -2987,11 +3056,14 @@ static int extract_or_test_member(__G)  /* return PK-type error code */
 /***********************************/
 /*  Function mapname_dir_vollab()  */
 /***********************************/
-static int mapname_dir_vollab( __G__ renamed,
+
+static int mapname_dir_vollab( __GX__ OFT( int) renamed,
 #ifdef SET_DIR_ATTRIB
-                                     pnum_dirs, pdir_list,
+                                      OFT( unsigned *) pnum_dirs,
+                                      OFT( direntry **) pdir_list,
 #endif
-                                     perr_in_arch)
+                                      OFT( int *) perr_in_arch)
+#ifdef NO_PROTO
   __GDEF
   int renamed;
 #ifdef SET_DIR_ATTRIB
@@ -2999,6 +3071,7 @@ static int mapname_dir_vollab( __G__ renamed,
   direntry **pdir_list;
 #endif
   int *perr_in_arch;
+#endif /* def NO_PROTO */
 {
   int error;
   int errcode;
@@ -3102,11 +3175,14 @@ static int mapname_dir_vollab( __G__ renamed,
 /************************************/
 /*  Function mapname_dir_vollabw()  */
 /************************************/
-static int mapname_dir_vollabw( __G__ renamed,
+
+static int mapname_dir_vollabw( __GX__ OFT( int) renamed,
 # ifdef SET_DIR_ATTRIB
-                                      pnum_dirs, pdir_listw,
+                                       OFT( unsigned *) pnum_dirs,
+                                       OFT( direntryw **) pdir_listw,
 # endif
-                                      perr_in_arch)
+                                       OFT( int *) perr_in_arch)
+#ifdef NO_PROTO
   __GDEF
   int renamed;
 # ifdef SET_DIR_ATTRIB
@@ -3114,6 +3190,7 @@ static int mapname_dir_vollabw( __G__ renamed,
   direntryw **pdir_listw;
 # endif
   int *perr_in_arch;
+#endif /* def NO_PROTO */
 {
   int error;
   int errcode;
@@ -3200,11 +3277,14 @@ static int mapname_dir_vollabw( __G__ renamed,
 /**********************************/
 /*  Function conflict_query_qr()  */
 /**********************************/
-static int conflict_query_qr( __G__ prenamed,
-                                    perr_in_arch)
+
+static int conflict_query_qr( __GX__ OFT( int *) prenamed,
+                                     OFT( int *) perr_in_arch)
+#ifdef NO_PROTO
   __GDEF
   int *prenamed;
   int *perr_in_arch;
+#endif /* def NO_PROTO */
 {
   int skip_entry = 0;           /* Return the skip_entry value:
                                  * <0: Start over.
@@ -3390,11 +3470,14 @@ normal_exit:
 /*******************************/
 /*  Function conflict_query()  */
 /*******************************/
-static int conflict_query( __G__ prenamed,
+
+static int conflict_query( __GX__ OFT( int *) prenamed,
 #ifdef SET_DIR_ATTRIB
-                                 pnum_dirs, pdir_list,
+                                  OFT( unsigned *) pnum_dirs,
+                                  OFT( direntry **) pdir_list,
 #endif
-                                 perr_in_arch)
+                                  OFT( int *) perr_in_arch)
+#ifdef NO_PROTO
   __GDEF
   int *prenamed;
 #ifdef SET_DIR_ATTRIB
@@ -3402,6 +3485,7 @@ static int conflict_query( __G__ prenamed,
   direntry **pdir_list;
 #endif
   int *perr_in_arch;
+#endif /* def NO_PROTO */
 {
   int error = PK_OK;                    /* Return PK-type error code. */
   int query;
@@ -3612,18 +3696,22 @@ exit:
 /********************************/
 /*  Function conflict_queryw()  */
 /********************************/
-static int conflict_queryw( __G__ prenamed,
+
+static int conflict_queryw( __GX__ OFT( int *) prenamed,
 #ifdef SET_DIR_ATTRIB
-                                  pnum_dirs, pdir_list,
+                                   OFT( unsigned *) pnum_dirs,
+                                   OFT( direntryw **) pdir_listw,
 #endif
-                                  perr_in_arch)
+                                   OFT( int *) perr_in_arch)
+#ifdef NO_PROTO
   __GDEF
   int *prenamed;
 #ifdef SET_DIR_ATTRIB
   unsigned *pnum_dirs;
-  direntry **pdir_list;
+  direntryw **pdir_list;
 #endif
   int *perr_in_arch;
+#endif /* def NO_PROTO */
 {
   int error = PK_OK;                    /* Return PK-type error code. */
   int query;
@@ -3675,7 +3763,7 @@ startover:
     /* mapnamew() can create dirs if not freshening or if renamed. */
     error = mapname_dir_vollabw( __G__ *prenamed,
 #ifdef SET_DIR_ATTRIB
-     pnum_dirs, pdir_list,
+     pnum_dirs, pdir_listw,
 #endif
      perr_in_arch);
 
@@ -3785,12 +3873,13 @@ exit:
 /*  Function set_dir_attribs()  */
 /********************************/
 
-static int set_dir_attribs( __G__ num_dirs,
-                                  dir_list,
+static int set_dir_attribs( __GX__ OFT( int) num_dirs,
+                                   OFT( direntry *) dir_list,
 # if defined(UNICODE_SUPPORT) && defined(WIN32_WIDE)
-                                  dir_listw,
+                                   OFT( direntryw *) dir_listw,
 # endif /* defined(UNICODE_SUPPORT) && defined(WIN32_WIDE) */
-                                  perr_in_arch)
+                                   OFT( int *) perr_in_arch)
+#ifdef NO_PROTO
   __GDEF
   int num_dirs;
   direntry *dir_list;
@@ -3798,6 +3887,7 @@ static int set_dir_attribs( __G__ num_dirs,
   direntryw *dir_listw;
 # endif /* defined(UNICODE_SUPPORT) && defined(WIN32_WIDE) */
   int *perr_in_arch;
+#endif /* def NO_PROTO */
 {
   int error = PK_OK;                    /* Return PK-type error code. */
   int i;
@@ -3959,9 +4049,12 @@ static int set_dir_attribs( __G__ num_dirs,
 /***************************************/
 /*  Function extract_or_test_stream()  */
 /***************************************/
+/* Return PK-type error code. */
 
-int extract_or_test_stream( __G)        /* Return PK-type error code. */
+int extract_or_test_stream( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
   int do_this_file;
   int error;
@@ -4504,8 +4597,10 @@ int extract_or_test_stream( __G)        /* Return PK-type error code. */
 /*******************************/
 /*  Function close_segment().  */
 /*******************************/
-static void close_segment(__G)
+static void close_segment( __GX)
+#ifdef NO_PROTO
   __GDEF
+#endif /* def NO_PROTO */
 {
   if (G.zipfn_sgmnt != NULL)
   {
@@ -4521,11 +4616,15 @@ static void close_segment(__G)
 /*  Function find_local_header()  */
 /**********************************/
 
-static int find_local_header( __G__ perr_in_arch, filnum, pold_extra_bytes)
+static int find_local_header( __GX__ OFT( int *) perr_in_arch,
+                                     OFT( ulg) filnum,
+                                     OFT( zoff_t *) pold_extra_bytes)
+#ifdef NO_PROTO
     __GDEF
     int *perr_in_arch;
     ulg filnum;
     zoff_t *pold_extra_bytes;
+#endif /* def NO_PROTO */
 {
   zoff_t bufstart;
   zoff_t inbuf_offset;
@@ -4746,9 +4845,11 @@ static int find_local_header( __G__ perr_in_arch, filnum, pold_extra_bytes)
 /*  Function central_local_name_check()  */
 /*****************************************/
 
-static void central_local_name_check( __G__ perr_in_arch)
+static void central_local_name_check( __GX__ OFT( int *) perr_in_arch)
+#ifdef NO_PROTO
   __GDEF
   int *perr_in_arch;
+#endif /* def NO_PROTO */
 {
   if (G.pInfo->cfilname != (char Far *)NULL)
   {
@@ -4782,13 +4883,18 @@ static void central_local_name_check( __G__ perr_in_arch)
 /******************************************/
 /*  Function extract_or_test_entrylist()  */
 /******************************************/
+/* return PK-type error code */
 
-static int extract_or_test_entrylist(__G__ mbr_ndx,
-                pfilnum, pnum_bad_pwd, pold_extra_bytes,
+static int extract_or_test_entrylist( __GX__ OFT( unsigned) mbr_ndx,
+                                             OFT( ulg *) pfilnum,
+                                             OFT( ulg *) pnum_bad_pwd,
+                                             OFT( zoff_t *) pold_extra_bytes,
 #ifdef SET_DIR_ATTRIB
-                pnum_dirs, pdir_list,
+                                             OFT( unsigned *) pnum_dirs,
+                                             OFT( direntry **) pdir_list,
 #endif
-                error_in_archive)    /* return PK-type error code */
+                                             OFT( int) error_in_archive)
+#ifdef NO_PROTO
     __GDEF
     unsigned mbr_ndx;
     ulg *pfilnum;
@@ -4799,6 +4905,7 @@ static int extract_or_test_entrylist(__G__ mbr_ndx,
     direntry **pdir_list;
 #endif
     int error_in_archive;
+#endif /* def NO_PROTO */
 {
     unsigned i;
     int renamed;
@@ -5474,9 +5581,12 @@ static int extract_or_test_entrylistw(__G__ mbr_ndx,
 /**************************************/
 /*  Function extract_or_test_files()  */
 /**************************************/
+/* return PK-type error code */
 
-int extract_or_test_files(__G)    /* return PK-type error code */
+int extract_or_test_files( __GX)
+#ifdef NO_PROTO
      __GDEF
+#endif /* def NO_PROTO */
 {
     unsigned mbr_ndx;
     zoff_t cd_bufstart;
@@ -5940,8 +6050,10 @@ int extract_or_test_files(__G)    /* return PK-type error code */
 /*  Function find_compr_idx()  */
 /*******************************/
 
-unsigned find_compr_idx(compr_methodnum)
+unsigned find_compr_idx( OFT( unsigned) compr_methodnum)
+#ifdef NO_PROTO
     unsigned compr_methodnum;
+#endif /* def NO_PROTO */
 {
    unsigned i;
 
@@ -5956,13 +6068,19 @@ unsigned find_compr_idx(compr_methodnum)
 /***************************/
 /*  Function memextract()  */
 /***************************/
+/* extract compressed */
 
-int memextract(__G__ tgt, tgtsize, src, srcsize)  /* extract compressed */
+int memextract( __GX__ OFT( uch *) tgt,
+                       OFT( ulg) tgtsize,
+                       OFT( ZCONST uch *) src,
+                       OFT( ulg) srcsize)
+#ifdef NO_PROTO
     __GDEF                                        /*  extra field block; */
     uch *tgt;                                     /*  return PK-type error */
     ulg tgtsize;                                  /*  level */
     ZCONST uch *src;
     ulg srcsize;
+#endif /* def NO_PROTO */
 {
     zoff_t old_csize=G.csize;
     uch   *old_inptr=G.inptr;
@@ -6047,10 +6165,12 @@ int memextract(__G__ tgt, tgtsize, src, srcsize)  /* extract compressed */
 /*  Function memflush()  */
 /*************************/
 
-int memflush(__G__ rawbuf, size)
+int memflush( __GX__ OFT( ZCONST uch *) rawbuf, OFT( ulg) size)
+#ifdef NO_PROTO
     __GDEF
     ZCONST uch *rawbuf;
     ulg size;
+#endif /* def NO_PROTO */
 {
     if (size > G.outsize)
         /* Here, PK_DISK is a bit off-topic, but in the sense of marking
@@ -6081,10 +6201,15 @@ int memflush(__G__ rawbuf, size)
  *  else
  *      putbit(0)
  */
-static void decompress_bits(outptr, needlen, bitptr)
+
+static void decompress_bits( OFT( uch *) outptr,
+                             OFT( unsigned) needlen,
+                             OFT( ZCONST uch *) bitptr)
+#ifdef NO_PROTO
     uch *outptr;        /* Pointer into output block */
     unsigned needlen;   /* Size of uncompressed block */
     ZCONST uch *bitptr; /* Pointer into compressed data */
+#endif /* def NO_PROTO */
 {
     ulg bitbuf = 0;
     int bitcnt = 0;
@@ -6130,13 +6255,20 @@ static void decompress_bits(outptr, needlen, bitptr)
  * - Deflation (see memextract())
  * The IZVMS block data is returned in malloc'd space.
  */
-uch *extract_izvms_block(__G__ ebdata, size, retlen, init, needlen)
+
+uch *extract_izvms_block( __GX__ OFT( ZCONST uch *) ebdata,
+                                 OFT( unsigned) size,
+                                 OFT( unsigned *) retlen,
+                                 OFT( ZCONST uch *) init,
+                                 OFT( unsigned) needlen)
+#ifdef NO_PROTO
     __GDEF
     ZCONST uch *ebdata;
     unsigned size;
     unsigned *retlen;
     ZCONST uch *init;
     unsigned needlen;
+#endif /* def NO_PROTO */
 {
     uch *ucdata;       /* Pointer to block allocated */
     int cmptype;
@@ -6202,10 +6334,12 @@ uch *extract_izvms_block(__G__ ebdata, size, retlen, init, needlen)
 
 /* fnfilter() - Convert name to safely printable form. */
 
-char *fnfilter(raw, space, size)
+char *fnfilter( OFT( ZCONST char *) raw, OFT( uch *) space, OFT(extent ) size)
+#ifdef NO_PROTO
     ZCONST char *raw;
     uch *space;
     extent size;
+#endif /* def NO_PROTO */
 {
 
 #ifndef NATIVE          /* ASCII:  filter ANSI escape codes, etc. */
@@ -6434,10 +6568,14 @@ char *fnfilter(raw, space, size)
 
 /* fnfilterw() - Convert wide-character name to safely printable form. */
 
-wchar_t *fnfilterw( src, dst, siz)
+wchar_t *fnfilterw( OFT( ZCONST wchar_t *) src,
+                    OFT( wchar_t *) dst,
+                    OFT( extent) siz)
+#ifdef NO_PROTO
     ZCONST wchar_t *src;        /* Pointer to source char (string). */
     wchar_t *dst;               /* Pointer to destination char (string). */
     extent siz;                 /* Not used (!). */
+#endif /* def NO_PROTO */
 {
     wchar_t *dsx = dst;
 
@@ -6478,10 +6616,12 @@ wchar_t *fnfilterw( src, dst, siz)
 /**************************/
 /*  Function UZbunzip2()  */
 /**************************/
-
-static int UZbunzip2(__G)
-    __GDEF
 /* decompress a bzipped entry using the libbz2 routines */
+
+static int UZbunzip2( __GX)
+#ifdef NO_PROTO
+    __GDEF
+#endif /* def NO_PROTO */
 {				
     int retval = PK_OK;         /*  Return PK-type error code. */
     int err = BZ_OK;
@@ -6632,10 +6772,12 @@ uzbunzip_cleanup_exit:
  * Capitalized types (like "SRes") or "SZ_*" macros (like SZ_OK) are
  * probably defined in a 7-ZIP header file.
  */
-
-static int UZlzma(__G)
-    __GDEF
 /* Decompress an LZMA-compressed entry using the LZMA routines. */
+
+static int UZlzma( __GX)
+#ifdef NO_PROTO
+    __GDEF
+#endif /* def NO_PROTO */
 {
     SRes sts;
     ELzmaStatus sts2;
@@ -6853,10 +6995,12 @@ static unsigned char ppmd_read_byte( void *szios_p)
 /***********************/
 /*  Function UZppmd()  */
 /***********************/
-
-static int UZppmd(__G)
-    __GDEF
 /* Decompress a PPMd-compressed entry using the PPMd routines. */
+
+static int UZppmd( __GX)
+#ifdef NO_PROTO
+    __GDEF
+#endif /* def NO_PROTO */
 {
     int sts;
     int sts2;

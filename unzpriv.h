@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2018 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -2263,9 +2263,12 @@ struct file_list {
 # define MAX_BITS    13                 /* used in unshrink() */
 # define HSIZE       (1 << MAX_BITS)    /* size of global work area */
 
-# define LF     10      /* '\n' on ASCII machines; must be 10 due to EBCDIC */
-# define CR     13      /* '\r' on ASCII machines; must be 13 due to EBCDIC */
-# define CTRLZ  26      /* DOS & OS/2 EOF marker (used in fileio.c, vms.c) */
+/* Macros for ASCII characters.  Valid ASCII, even on EBCDIC systems. */
+# define CHR_LF     10  /* LF '\n' */
+# define CHR_CR     13  /* CR '\r' */
+# define CHR_DC3    19  /* DC3 XOFF '^S' */
+# define CHR_SUB    26  /* SUB '^Z' DOS, OS/2 EOF marker (fileio.c, vms.c) */
+# define CHR_ESC    33  /* ESC '^[' */
 
 # ifdef EBCDIC
 #  define foreign(c)    ascii[(uch)(c)]
@@ -2309,7 +2312,7 @@ struct file_list {
 # endif
 
 # ifdef WILD_STOP_AT_DIR
-#  define __WDLPRO  , int sepc
+#  define __WDLPRO  , OFT( int) sepc
 #  define __WDL     , sepc
 #  define __WDLDEF  int sepc;
 #  define WISEP     , (uO.W_flag ? '/' : '\0')

@@ -4,9 +4,9 @@
 
 #==============================================================================
 # unix/configure: Detect feature support and pass that information to Makefile.
-# - For UnZip, UnZipSFX, fUnZip, and ZipInfo            Revised: 2018-05-04
+# - For UnZip, UnZipSFX, fUnZip, and ZipInfo            Revised: 2023-12-08
 #
-# Copyright (c) 2004-2018 Info-ZIP.  All rights reserved.
+# Copyright (c) 2004-2023 Info-ZIP.  All rights reserved.
 #
 # See the accompanying file LICENSE, version 2009-Jan-2 or later (the
 # contents of which are also included in zip.h) for terms of use.  If,
@@ -1697,7 +1697,9 @@ echo '-'
 
 # Disable ANSI function prototypes where not supported.
 echon 'Check for prototypes...'
-echo "int main(int argc, char *argv[]) { return 0; }" > conftest.c
+cat > conftest.c << _EOF_
+int main(int argc, char *argv[]) { return 0; }
+_EOF_
 $CC_TST $CFLAGS -c conftest.c >/dev/null 2>/dev/null
 status=$?
 if [ $status -ne 0 ]; then
@@ -1930,7 +1932,9 @@ fi
 
 # Check for utime.h header.
 echon 'Check for utime.h...'
-echo "#include <utime.h>" > conftest.c
+cat > conftest.c << _EOF_
+#include <utime.h>
+_EOF_
 $CPP_TST conftest.c >/dev/null 2>/dev/null
 status=$?
 if [ $status -eq 0 ]; then
@@ -1942,7 +1946,9 @@ fi
 
 # Check for sys/timeb.h header.
 echon 'Check for sys/timeb.h...'
-echo "#include <sys/timeb.h>" > conftest.c
+cat > conftest.c << _EOF_
+#include <sys/timeb.h>"
+_EOF_
 $CPP_TST conftest.c >/dev/null 2>/dev/null
 status=$?
 if [ $status -eq 0 ]; then
@@ -1955,7 +1961,9 @@ fi
 # Check for sys/time.h header and gettimeofday() function.
 echo 'Check for sys/time.h and gettimeofday() needed for entry timing...'
 echon '  Check for sys/time.h...'
-echo "#include <sys/time.h>" > conftest.c
+cat > conftest.c << _EOF_
+#include <sys/time.h>
+_EOF_
 $CPP_TST conftest.c >/dev/null 2>/dev/null
 status=$?
 if [ $status -ne 0 ]; then
@@ -1996,7 +2004,9 @@ INCLS='ctype.h wctype.h langinfo.h locale.h'
 for inc in $INCLS
 do
   echon "Check for ${inc}..."
-  echo "#include <$inc>" > conftest.c
+  cat > conftest.c << _EOF_
+  #include <$inc>
+_EOF_
   $CPP_TST conftest.c >/dev/null 2>/dev/null
   status=$?
   if [ $status -eq 0 ]; then
@@ -2013,7 +2023,9 @@ done
 
 # Check for wchar.h header.
 echon 'Check for wchar.h...'
-echo "#include <wchar.h>" > conftest.c
+cat > conftest.c << _EOF_
+#include <wchar.h>
+_EOF_
 $CPP_TST conftest.c >/dev/null 2>/dev/null
 status=$?
 if [ $status -eq 0 ]; then
@@ -2233,8 +2245,14 @@ FUNCS="${FUNCS} nl_langinfo rename rmdir strchr strrchr"
 for func in $FUNCS
 do
   echon "Check for ${func}()..."
-  echo "int main(){ $func(); return 0; }" > conftest.c
-  $CC_TST $CFLAGS $BIF_TST -o conftest conftest.c >/dev/null 2>/dev/null
+  cat > conftest.c << _EOF_
+#ifndef NO_PROTO
+void $func( void);
+#endif
+int main(){ $func(); return 0; }
+_EOF_
+  $CC_TST ${CFLAGS_TST} $CFLAGS $BIF_TST -o conftest conftest.c \
+   >/dev/null 2>/dev/null
   status=$?
   if [ $status -ne 0 ]; then
     ucname=` echo ${func} | tr '[a-z]' '[A-Z]' `
@@ -2278,7 +2296,10 @@ rm -f "${temp_file}" conftest.err
 
 # Check for memset().
 echon 'Check for memset()...'
-echo "int main(){ char k; memset(&k,0,0); return 0; }" > conftest.c
+cat > conftest.c << _EOF_
+#include <string.h>
+int main(){ char k; memset(&k,0,0); return 0; }
+_EOF_
 $CC_TST $CFLAGS -o conftest conftest.c >/dev/null 2>/dev/null
 status=$?
 if [ $status -ne 0 ]; then
@@ -2355,6 +2376,7 @@ fi
 # Check for directory traversal libraries (ndir, dirent, bsd, ...).
 echon 'Check for directory traversal libraries...'
 cat > conftest.c << _EOF_
+#include <dirent.h>
 int main() { return closedir(opendir(".")); }
 _EOF_
 $CC_TST $CFLAGS -o conftest conftest.c >/dev/null 2>/dev/null
@@ -2382,7 +2404,9 @@ fi
 # Check for readlink().
 # - Dynix/ptx 1.3 needed this.
 echon 'Check for readlink()...'
-echo "int main(){ return readlink(); }" > conftest.c
+cat > conftest.c << _EOF_
+int main(){ return readlink(); }"
+_EOF_
 $CC_TST $CFLAGS -o conftest conftest.c >/dev/null 2>/dev/null
 status=$?
 if [ $status -eq 0 ]; then
@@ -2405,7 +2429,9 @@ INCLS='dirent.h sys/ndir.h ndir.h sys/dir.h'
 for inc in $INCLS
 do
   echon "  <${inc}>..."
-  echo "#include <$inc>" > conftest.c
+  cat > conftest.c << _EOF_
+  #include <$inc>
+_EOF_
   $CPP_TST conftest.c >/dev/null 2>/dev/null
   status=$?
   if [ $status -eq 0 ]; then
@@ -2421,7 +2447,9 @@ done
 
 # Check for sys/param.h.
 echon 'Check for sys/param.h...'
-echo "#include <sys/param.h>" > conftest.c
+cat > conftest.c << _EOF_
+#include <sys/param.h>
+_EOF_
 $CPP_TST conftest.c >/dev/null 2>/dev/null
 status=$?
 if [ $status -ne 0 ]; then
@@ -2440,7 +2468,9 @@ INCLS='stdlib.h stddef.h stdint.h unistd.h fcntl.h string.h langinfo.h'
 for inc in $INCLS
 do
   echon "  <${inc}>..."
-  echo "#include <$inc>" > conftest.c
+  cat > conftest.c << _EOF_
+  #include <$inc>
+_EOF_
   $CPP_TST conftest.c >/dev/null 2>/dev/null
   status=$?
   if [ $status -ne 0 ]; then
@@ -2460,7 +2490,9 @@ INCLS='termios.h termio.h sgtty.h'
 for inc in $INCLS
 do
   echon "  <${inc}>..."
-  echo "#include <$inc>" > conftest.c
+  cat > conftest.c << _EOF_
+  #include <$inc>"
+_EOF_
   $CPP_TST conftest.c >/dev/null 2>/dev/null
   status=$?
   if [ $status -eq 0 ]; then
@@ -2481,7 +2513,9 @@ INCLS='mbstr.h mbstring.h mbctype.h'
 for inc in $INCLS
 do
   echon "   <${inc}>..."
-  echo "#include <$inc>" > conftest.c
+  cat > conftest.c << _EOF_
+#include <$inc>
+_EOF_
   $CPP_TST conftest.c >/dev/null 2>/dev/null
   status=$?
   if [ $status -eq 0 ]; then
@@ -2599,8 +2633,9 @@ echo '-'
 ossf=0
 echon 'Check for OS-specific flags...'
 if [ -n "${UNAME_S}" ]; then
-  echo "int main() { return 0; }" > conftest.c
-
+  cat > conftest.c << _EOF_
+  int main() { return 0; }
+_EOF_
   case "${UNAME_S}" in
 
     OSF1|ULTRIX)
@@ -2648,7 +2683,9 @@ _EOF_
   esac
 elif [ -n "${UNAME_X}" ]; then
 # SCO shared library check.  ??? Where's the "SCO" test"???
-  echo "int main() { return 0; }" > conftest.c
+  cat > conftest.c << _EOF_
+  int main() { return 0; }
+_EOF_
   $CC_TST $CFLAGS -o conftest conftest.c -lc_s -nointl >/dev/null 2>/dev/null
   status=$?
   if [ $status -eq 0 ]; then

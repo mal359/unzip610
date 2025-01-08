@@ -2049,3 +2049,48 @@ Bugs fixed:
  - Better support for GCC on RISC OS.  (unzpriv.h, acorn/GMakefile,
    acorn/riscos.c, acorn/riscos.h, aes_wg/brg_endian.h) [SMS]
 
+6.1c25b (20 Aug 2020):
+ - Updated bzip2 source to version 1.0.8.
+
+6.1c25c (14 Dec 2023):
+ - RISC OS GCC "make" file changes:
+    - Reformated, reducing non-comment white space, to avoid action-line
+      overflow.
+    - Replaced format-restricted in-file help comments with a separate
+      file.  Use "make help" to show the "make" file instructions.
+    - Removed references to "squeeze".
+    - Other minor changes.
+   (acorn/GMakefile, acorn/GMakefile.help (new)) [SMS]
+ - Added Obey script to assist in making self-extracting archive on
+   RISC OS.  (acorn/makesfx (new)) [SMS]
+ - Added function prototypes where needed to avoid warnings from strict
+   compilers on Unix.  Prototypes in old code are conditional, so
+   obsolete compilers should still work as before, if modern features
+   (AES, BZIP2, LZMA, PPMD) are disabled.  Found one (inconsequential)
+   function-argument type typo in Windows-specific code in extract.c.
+   (crc32.c, crypt.c, envargs.c, explode.c, extract.c, fileio.c,
+   funzip.c, globals.h, iconv_map.c, inflate.c, list.c, match.c,
+   process.c, ttyio.c, ubz2err.c, unshrink.c, unzip.c, unzpriv.h,
+   unzvers.h, zipinfo.c, unix/configure, unix/Makefile, unix/unix.c)
+   [SMS]
+ - Unix-specific header file contained crude prototypes for gmtime() and
+   localtime(), which conflicted with proper prototypes in <time.h>. 
+   Now disabled by default.  If anyone still needs them, define C macro
+   NEED_DECL_TM_FUNCS, and let us know why they're needed where. 
+   (unix/unxcfg.h)  [SMS]
+ - Changed "clean*" targets in Unix "make" file.  Now, "clean" deletes
+   _all_ product files (UnZip and bzip2).  "clean_bzip2" still deletes
+   only bzip2 product files.  New target, "clean_unzip", deletes only
+   UnZip product files (like old "clean").  (unix/Makefile) [SMS]
+ - Updated VMS builders for x86_64 architecture, including IA64
+   cross-tools.  (bzip2/buildbz2.com, bzip2/vms/descrip.mms,
+   bzip2/vms/descrip_src.mms, bzip2/vms/vms_notes.txt,
+   vms/build_unzip.com, vms/descrip.mms, vms/descrip_src.mms) [SMS]
+ - VMS-specific code: Minor buffer size adjustments, more careful status
+   checking.  (vms/vms.c)  [SMS]
+ - Changed some simple C macro names for ASCII character codes, to avoid
+   conflict on Windows with "CR" in "winnt.h" for Visual Studio 2019 (at
+   least).  (fileio.c, unzpriv.h, macos/source/maccfg.h,
+   netware/nlmcfg.h, theos/thscfg.h, vms/vms.c, win32/w32cfg.h,
+   wince/wcecfg.h)  [Edward Danley, SMS]
+

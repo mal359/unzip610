@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2017 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -50,8 +50,10 @@
  * BZ_NO_STDIO), required to handle fatal internal bug-type errors of
  * the bzip2 library.
  */
-void bz_internal_error(bzerrcode)
+void bz_internal_error( OFT( int) bzerrcode)
+#ifdef NO_PROTO
     int bzerrcode;
+#endif /* def NO_PROTO */
 {
     GETGLOBALS();
 

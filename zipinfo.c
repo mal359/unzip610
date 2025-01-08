@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2017 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -494,11 +494,15 @@ static ZCONST char Far *method[NUM_METHODS] = {
 /*  Function zi_opts()  */
 /************************/
 
-int zi_opts(__G__ opts, pargc, pargv)
+int zi_opts( __GX__ OFT( ZCONST struct option_struct *) opts,
+                    OFT( int *) pargc,
+                    OFT( char ***) pargv)
+#ifdef NO_PROTO
     ZCONST struct option_struct *opts;
     int *pargc;
     char ***pargv;
     __GDEF
+#endif /* def NO_PROTO */
 {
     int argc;
     int error = FALSE;
@@ -794,6 +798,7 @@ int zi_opts(__G__ opts, pargc, pargv)
                 }
                 in_xfiles_count++;
                 value = NULL;       /* In use.  Don't free it. */
+                break;
             case 'z':      /* print zipfile comment */
                 if (negative)
                     uO.zflag = 0;
@@ -1015,8 +1020,10 @@ int zi_opts(__G__ opts, pargc, pargv)
 /*  Function zi_end_central()  */
 /*******************************/
 
-void zi_end_central(__G)
+void zi_end_central( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
 /*---------------------------------------------------------------------------
     Print out various interesting things about the zipfile.
@@ -1081,9 +1088,12 @@ void zi_end_central(__G)
 /**************************/
 /*  Function zipinform()  */
 /**************************/
+/* Return PK-type error code. */
 
-int zipinform(__G)              /* Return PK-type error code. */
+int zipinform( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     int do_this_file = FALSE;
     int error;
@@ -1433,8 +1443,10 @@ err_exit:                       /* Used by the SKIP_ZI() macro. */
 /*  cmpr_mthd()  */
 /*****************/
 
-static ZCONST char *cmpr_mthd( methid)
+static ZCONST char *cmpr_mthd( OFT( unsigned) methid)
+#ifdef NO_PROTO
     unsigned methid;
+#endif /* def NO_PROTO */
 {
     static char mthd[ 16];
     ZCONST char *ret;
@@ -1466,11 +1478,15 @@ static ZCONST char Far *os[NUM_HOSTS] = {
 /*  zi_vers_made_by()  */
 /***********************/
 
-static void zi_vers_made_by( __G__ indent, hnum, hver)
+static void zi_vers_made_by( __GX__ OFT( int) indent,
+                                    OFT( unsigned) hnum,
+                                    OFT( unsigned) hver)
+#ifdef NO_PROTO
     __GDEF
     int indent;
     unsigned hnum;
     unsigned hver;
+#endif /* def NO_PROTO */
 {
     char unkn[16];
     ZCONST char *varmsg_str;
@@ -1498,11 +1514,15 @@ static void zi_vers_made_by( __G__ indent, hnum, hver)
 /*  zi_long_extern_attr()  */
 /***************************/
 
-static void zi_long_extern_attr( __G__ indent, hnum, xatt)
+static void zi_long_extern_attr( __GX__ OFT( int) indent,
+                                        OFT( unsigned) hnum,
+                                        OFT( unsigned) xatt)
+#ifdef NO_PROTO
     __GDEF
     int indent;
     unsigned hnum;
     unsigned xatt;
+#endif /* def NO_PROTO */
 {
     unsigned xatth;
     unsigned xattl;
@@ -1704,10 +1724,13 @@ static void zi_long_extern_attr( __G__ indent, hnum, xatt)
 /*  zi_long_intern_attr()  */
 /***************************/
 
-static void zi_long_intern_attr( __G__ indent, iatt)
+static void zi_long_intern_attr( __GX__ OFT( int) indent,
+                                        OFT( unsigned) iatt)
+#ifdef NO_PROTO
     __GDEF
     int indent;
     unsigned iatt;
+#endif /* def NO_PROTO */
 {
     Info(slide, 0, ((char *)slide, LoadFarString(ApparentFileType),
       (indent ? indentStr : nullStr), iatt,
@@ -1719,12 +1742,15 @@ static void zi_long_intern_attr( __G__ indent, iatt)
 /************************/
 /*  Function zi_long()  */
 /************************/
+/* return PK-type error code */
 
-static int zi_long(__G__ pEndprev, error_in_archive)
-    /* return PK-type error code */
+static int zi_long( __GX__ OFT( zusz_t *) pEndprev,
+                           OFT( int) error_in_archive)
+#ifdef NO_PROTO
     __GDEF
     zusz_t *pEndprev;                /* for zi_long() check of extra bytes */
     int error_in_archive;            /* may signal premature return */
+#endif /* def NO_PROTO */
 {
 #ifdef USE_EF_UT_TIME
     iztimes z_utime;
@@ -2541,9 +2567,12 @@ ef_default_display:
 /*************************/
 /*  Function zi_short()  */
 /*************************/
+/* return PK-type error code */
 
-static int zi_short(__G)   /* return PK-type error code */
+static int zi_short( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
 #ifdef USE_EF_UT_TIME
     iztimes     z_utime;
@@ -2899,9 +2928,11 @@ static int zi_short(__G)   /* return PK-type error code */
 /*  Function zi_showMacTypeCreator()  */
 /**************************************/
 
-static void zi_showMacTypeCreator(__G__ ebfield)
+static void zi_showMacTypeCreator( __GX__ OFT( uch *) ebfield)
+#ifdef NO_PROTO
     __GDEF
     uch *ebfield;
+#endif /* def NO_PROTO */
 {
     /* not every Type / Creator character is printable */
     if (isprint(native(ebfield[0])) && isprint(native(ebfield[1])) &&
@@ -2934,11 +2965,15 @@ static void zi_showMacTypeCreator(__G__ ebfield)
 /*  Function zi_time()  */
 /************************/
 
-static char *zi_time(__G__ datetimez, modtimez, d_t_str)
+static char *zi_time( __GX__ OFT( ZCONST ulg *) datetimez,
+                             OFT( ZCONST time_t *) modtimez,
+                             OFT( char *) d_t_str)
+#ifdef NO_PROTO
     __GDEF
     ZCONST ulg *datetimez;
     ZCONST time_t *modtimez;
     char *d_t_str;                      /* 21 char (incl NUL), minimum. */
+#endif /* def NO_PROTO */
 {
     unsigned yr, mo, dy, hh, mm, ss;
     char monthbuf[4];

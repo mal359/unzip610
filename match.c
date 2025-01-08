@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2017 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -119,8 +119,11 @@ int recmatch OF((ZCONST uch *pattern, ZCONST uch *string,
 
 
 
-static char *isshexp(p)
+static char *isshexp( OFT( ZCONST char *) p)
+#ifdef NO_PROTO
 ZCONST char *p;
+#endif /* def NO_PROTO */
+
 /* If p is a sh expression, a pointer to the first special character is
    returned.  Otherwise, NULL is returned. */
 {
@@ -134,8 +137,11 @@ ZCONST char *p;
 
 
 
-static int namecmp(s1, s2)
-    ZCONST char *s1, *s2;
+static int namecmp( OFT( ZCONST char *) s1, OFT( ZCONST char *) s2)
+#ifdef NO_PROTO
+    ZCONST char *s1;
+    ZCONST char *s2;
+#endif /* def NO_PROTO */
 {
     int d;
 
@@ -153,11 +159,16 @@ static int namecmp(s1, s2)
 
 
 
-static int recmatch(p, s, ic __WDL)
+static int recmatch( OFT( ZCONST uch *) p,
+                     OFT( ZCONST uch *) s,
+                     OFT( int) ic
+                     __WDLPRO)
+#ifdef NO_PROTO
     ZCONST uch *p;        /* sh pattern to match */
     ZCONST uch *s;        /* string to which to match it */
     int ic;               /* true for case insensitivity */
     __WDLDEF              /* directory sepchar for WildStopAtDir mode, or 0 */
+#endif /* def NO_PROTO */
 /* Recursively compare the sh pattern p with the string s and return 1 if
  * they match, and 0 or 2 if they don't or if there is a syntax error in the
  * pattern.  This routine recurses on itself no more deeply than the number
@@ -331,10 +342,15 @@ static int recmatch(p, s, ic __WDL)
 
 /* match() is a shell to recmatch() to return only Boolean values. */
 
-int match(string, pattern, ignore_case __WDL)
+int match( OFT( ZCONST char *) string,
+           OFT( ZCONST char *) pattern,
+           OFT( int) ignore_case
+           __WDLPRO)
+#ifdef NO_PROTO
     ZCONST char *string, *pattern;
     int ignore_case;
     __WDLDEF
+#endif /* def NO_PROTO */
 {
 # if (defined(MSDOS) && defined(DOSWILD))
     char *dospattern;
@@ -394,8 +410,10 @@ int match(string, pattern, ignore_case __WDL)
 # define ESC_CHR '\\'
 #endif
 
-int iswild(p)
+int iswild( OFT( ZCONST char *) p)
+#ifdef NO_PROTO
     ZCONST char *p;
+#endif /* def NO_PROTO */
 {
     for (; *p; INCSTR( p))
     {

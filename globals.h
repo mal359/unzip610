@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2018 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -528,7 +528,7 @@ extern uch local_hdr_sig[ 4];
 #   define DESTROYGLOBALS()  do {free_G_buffers(pG); free(pG);} while (0)
 #  endif /* ?USETHREADID */
 #  define CONSTRUCTGLOBALS()  Uz_Globs *pG = globalsCtor()
-# else /* !REENTRANT */
+# else /* def REENTRANT */
    extern Uz_Globs            G;
 #  define __G
 #  define __G__
@@ -538,7 +538,15 @@ extern uch local_hdr_sig[ 4];
 #  define GETGLOBALS()
 #  define CONSTRUCTGLOBALS()  globalsCtor()
 #  define DESTROYGLOBALS()
-# endif /* ?REENTRANT */
+# endif /* def REENTRANT [else] */
+
+# ifdef PROTO
+#  define __GX __GPRO                                   /* No other args. */
+#  define __GX__ __GPRO__                               /* Other args. */
+# else
+#  define __GX __G                                      /* No other args. */
+#  define __GX__ __G__                                  /* Other args. */
+# endif
 
 # define uO             G.UzO
 

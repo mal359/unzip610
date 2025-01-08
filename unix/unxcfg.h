@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2018 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -128,7 +128,8 @@ typedef struct stat z_stat;
 #   include <sys/timeb.h>
 #  endif
 #  include <time.h>
-#  if (!defined(__IBMC__))
+#  ifdef NEED_DECL_TM_FUNCS
+   /* 2023-12-11 SMS.  Was: (!defined(__IBMC__))  Why/where, with <time.h>? */
    struct tm *gmtime(), *localtime();
 #  endif
 # endif
@@ -209,7 +210,7 @@ typedef struct stat z_stat;
 # ifdef EBCDIC
 #  define PutNativeEOL  *q++ = '\n';
 # else
-#  define PutNativeEOL  *q++ = native(LF);
+#  define PutNativeEOL  *q++ = native(CHR_LF);
 # endif
 # define SCREENSIZE(ttrows, ttcols)  screensize(ttrows, ttcols)
 # define SCREENWIDTH     80

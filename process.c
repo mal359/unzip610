@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2017 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -251,17 +251,26 @@ static ZCONST char Far ZipfileCommTrunc1[] =
  * Returns the file size.
  */
 #ifdef USE_STRM_INPUT
-static zoff_t file_size(file)
+
+static zoff_t file_size( OFT( FILE *) file)
+#ifdef NO_PROTO
     FILE *file;
+#endif /* def NO_PROTO */
 {
     int sts;
     size_t siz;
+
 #else /* def USE_STRM_INPUT */
-static zoff_t file_size(fh)
+
+static zoff_t file_size( OFT( int) fh)
+#ifdef NO_PROTO
     int fh;
+#endif /* def NO_PROTO */
 {
     int siz;
+
 #endif /* def USE_STRM_INPUT [else] */
+
     zoff_t ofs;
     char waste[4];
 
@@ -331,7 +340,7 @@ static zoff_t file_size(fh)
 # define C_MAYBE_EXE                    /* Used in open_and_test_input_file() */
 # define C_A_MAYBE_EXE                  /* Used in caller(s). */
 #else
-# define C_MAYBE_EXE , maybe_exe
+# define C_MAYBE_EXE , OFT( int *) maybe_exe
 # define C_A_MAYBE_EXE , &maybe_exe
 #endif
 
@@ -340,12 +349,15 @@ static zoff_t file_size(fh)
 /* Function open_and_test_input_file() */
 /***************************************/
 
-static int open_and_test_input_file( __G__ lastchance C_MAYBE_EXE)
+static int open_and_test_input_file( __GX__ OFT( int *) lastchance
+                                            C_MAYBE_EXE)
+#ifdef NO_PROTO
   __GDEF
   int *lastchance;
-#ifndef SFX
+# ifndef SFX
   int *maybe_exe;
-#endif
+# endif
+#endif /* def NO_PROTO */
 {
   int error = PK_OK;          /* Return PK-type error code. */
   int sts;
@@ -507,9 +519,12 @@ static int open_and_test_input_file( __G__ lastchance C_MAYBE_EXE)
 /********************************/
 /* Function process_zip_cmmnt() */
 /********************************/
+/* return PK-type error code */
 
-static int process_zip_cmmnt(__G)       /* return PK-type error code */
+static int process_zip_cmmnt( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     int error = PK_COOL;
 
@@ -606,13 +621,17 @@ static int process_zip_cmmnt(__G)       /* return PK-type error code */
 /***********************/
 /* Function rec_find() */
 /***********************/
+/* return 0 when rec found, 1 when not found, 2 in case of read error */
 
-static int rec_find(__G__ searchlen, signature, rec_size)
-    /* return 0 when rec found, 1 when not found, 2 in case of read error */
+static int rec_find( __GX__ OFT( zoff_t) searchlen,
+                            OFT( uch*) signature,
+                            OFT( int) rec_size)
+#ifdef NO_PROTO
     __GDEF
     zoff_t searchlen;
     uch* signature;
     int rec_size;
+#endif /* def NO_PROTO */
 {
     int i, numblks, found=FALSE;
     zoff_t tail_len;
@@ -687,10 +706,13 @@ static int rec_find(__G__ searchlen, signature, rec_size)
 /***************************/
 /* Function find_ecrec64() */
 /***************************/
+/* return PK-class error */
 
-static int find_ecrec64(__G__ searchlen)         /* return PK-class error */
+static int find_ecrec64( __GX__ OFT( zoff_t) searchlen)
+#ifdef NO_PROTO
     __GDEF
     zoff_t searchlen;
+#endif /* def NO_PROTO */
 {
     ec_byte_rec64 byterec;          /* buf for ecrec64 */
     ec_byte_loc64 byterecL;         /* buf for ecrec64 locator */
@@ -919,10 +941,13 @@ static int find_ecrec64(__G__ searchlen)         /* return PK-class error */
 /*************************/
 /* Function find_ecrec() */
 /*************************/
+/* return PK-class error */
 
-static int find_ecrec(__G__ searchlen)          /* return PK-class error */
+static int find_ecrec( __GX__ OFT( zoff_t) searchlen)
+#ifdef NO_PROTO
     __GDEF
     zoff_t searchlen;
+#endif /* def NO_PROTO */
 {
     int found = FALSE;
     int error_in_archive;
@@ -1059,11 +1084,13 @@ static int find_ecrec(__G__ searchlen)          /* return PK-class error */
 /***************************************/
 /* Function extract_archive_seekable() */
 /***************************************/
-
 /* Return PK-type error code. */
-static int extract_archive_seekable( __G__ lastchance)
+
+static int extract_archive_seekable( __GX__ OFT( int) lastchance)
+#ifdef NO_PROTO
     __GDEF
     int lastchance;
+#endif /* def NO_PROTO */
 {
 #ifndef SFX
     int maybe_exe = FALSE;
@@ -1363,8 +1390,10 @@ static int extract_archive_seekable( __G__ lastchance)
 /*******************************/
 /* Return PK-type error code. */
 
-int process_file_hdr( __G)
+int process_file_hdr( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     G.pInfo->lcflag = 0;
     if (uO.L_flag == 1)       /* name conversion for monocase systems */
@@ -1439,10 +1468,13 @@ int process_file_hdr( __G)
 /******************************/
 /* Function extract_archive() */
 /******************************/
+/* Return PK-type error code. */
 
-static int extract_archive( __G__ lastchance)   /* Return PK-type error code. */
+static int extract_archive( __GX__ OFT( int) lastchance)
+#ifdef NO_PROTO
   __GDEF
   int lastchance;
+#endif /* def NO_PROTO */
 {
   int error;
 #ifndef SFX
@@ -1487,8 +1519,10 @@ static int extract_archive( __G__ lastchance)   /* Return PK-type error code. */
 
 # define ANS ((char *)(slide + (extent)(WSIZE>> 1)))
 
-static int check_auto_dest_dir( __G)
+static int check_auto_dest_dir( __GX)
+#ifdef NO_PROTO
   __GDEF
+#endif /* def NO_PROTO */
 {
   int error_auto_dest = 0;
 
@@ -1687,9 +1721,12 @@ static int check_auto_dest_dir( __G)
 /*****************************/
 /* Function free_G_buffers() */
 /*****************************/
+/* releases all memory allocated in global vars */
 
-void free_G_buffers(__G)     /* releases all memory allocated in global vars */
+void free_G_buffers( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
 # ifndef SFX
     unsigned i;
@@ -1840,9 +1877,12 @@ void free_G_buffers(__G)     /* releases all memory allocated in global vars */
 /*******************************/
 /* Function process_zipfiles() */
 /*******************************/
+/* return PK-type error code */
 
-int process_zipfiles(__G)    /* return PK-type error code */
+int process_zipfiles( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
 #ifndef SFX
     char *zipfn_prev = (char *)NULL;
@@ -1870,10 +1910,11 @@ int process_zipfiles(__G)    /* return PK-type error code */
     G.inbuf = (uch *)izu_malloc(INBUFSIZ + 4);    /* +4 for hold[] (below) */
     G.outbuf = (uch *)izu_malloc(OUTBUFSIZ + 1);  /* +1 for string term. */
 
-    if ((G.inbuf == (uch *)NULL) || (G.outbuf == (uch *)NULL)) {
+    if ((G.inbuf == (uch *)NULL) || (G.outbuf == (uch *)NULL))
+    {
         Info(slide, 0x401, ((char *)slide,
-          LoadFarString(CannotAllocateBuffers)));
-        return(PK_MEM);
+          LoadFarString( CannotAllocateBuffers)));
+        return PK_MEM;
     }
     G.hold = G.inbuf + INBUFSIZ;     /* to check for boundary-spanning sigs */
 #ifndef VMS     /* VMS uses its own buffer scheme for textmode flush(). */
@@ -2237,8 +2278,10 @@ int process_zipfiles(__G)    /* return PK-type error code */
 /* Function check_ecrec_zip64() */
 /********************************/
 
-static int check_ecrec_zip64(__G)
+static int check_ecrec_zip64( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     return G.ecrec.offset_start_central_directory  == 0xFFFFFFFFL
         || G.ecrec.size_central_directory          == 0xFFFFFFFFL
@@ -2247,15 +2290,18 @@ static int check_ecrec_zip64(__G)
         || G.ecrec.num_disk_start_cdir             == 0xFFFF
         || G.ecrec.number_this_disk                == 0xFFFF;
 } /* check_ecrec_zip64(). */
-#endif /* 0 */
+#endif /* 0 */ /* currently unused */
 
 
 /***************************/
 /* Function get_cdir_ent() */
 /***************************/
+/* return PK-type error code */
 
-static int get_cdir_ent(__G)    /* return PK-type error code */
+static int get_cdir_ent( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     cdir_byte_hdr byterec;
 
@@ -2310,9 +2356,12 @@ static int get_cdir_ent(__G)    /* return PK-type error code */
 /************************************/
 /* Function process_cdir_file_hdr() */
 /************************************/
+/* return PK-type error code */
 
-int process_cdir_file_hdr(__G)    /* return PK-type error code */
+int process_cdir_file_hdr( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     int error;
 
@@ -2339,9 +2388,12 @@ int process_cdir_file_hdr(__G)    /* return PK-type error code */
 /*************************************/
 /* Function process_local_file_hdr() */
 /*************************************/
+/* return PK-type error code */
 
-int process_local_file_hdr(__G)    /* return PK-type error code */
+int process_local_file_hdr( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     local_byte_hdr byterec;
 
@@ -2387,9 +2439,11 @@ int process_local_file_hdr(__G)    /* return PK-type error code */
 /* Function process_cdir_digsig() */
 /**********************************/
 
-int process_cdir_digsig(__G__ enddigsig_len_p)
+int process_cdir_digsig( __GX__ OFT( long *) enddigsig_len_p)
+#ifdef NO_PROTO
     __GDEF
     long *enddigsig_len_p;
+#endif /* def NO_PROTO */
 {
   uch *digsig_buf;
   uch digsig_len[ 2];
@@ -2452,10 +2506,12 @@ int process_cdir_digsig(__G__ enddigsig_len_p)
 /* Function getZip64Data() */
 /*******************************/
 
-int getZip64Data(__G__ ef_buf, ef_len)
+int getZip64Data( __GX__ OFT( ZCONST uch *) ef_buf, OFT( long) ef_len)
+#ifdef NO_PROTO
     __GDEF
     ZCONST uch *ef_buf; /* buffer containing extra field */
     long ef_len;        /* total length of extra field */
+#endif /* def NO_PROTO */
 {
     unsigned eb_id;
     long eb_len;
@@ -2473,7 +2529,7 @@ int getZip64Data(__G__ ef_buf, ef_len)
  * of ef_len caused by corrupt/malicious data.  (32-bit is adequate.
  * Used "long" to accommodate any systems with 16-bit "int".)
  *
- * 2014-12-17 SMS.  (oCERT.org report.)
+ * 2014-12-17 SMS.  (oCERT.org report.)  CVE-2014-8141.
  * Added checks to ensure that enough data are available before calling
  * makeint64() or makelong().  Replaced various sizeof() values with
  * simple ("4" or "8") constants.  (The Zip64 structures do not depend
@@ -2566,10 +2622,12 @@ int getZip64Data(__G__ ef_buf, ef_len)
  * See note at getZip64Data().
  */
 
-int getUnicodeData(__G__ ef_buf, ef_len)
+int getUnicodeData( __GX__ OFT( ZCONST uch *) ef_buf, OFT( long) ef_len)
+#ifdef NO_PROTO
     __GDEF
     ZCONST uch *ef_buf; /* buffer containing extra field */
     long ef_len;        /* total length of extra field */
+#endif /* def NO_PROTO */
 {
     unsigned eb_id;
     long eb_len;
@@ -2699,10 +2757,6 @@ int getUnicodeData(__G__ ef_buf, ef_len)
    encoded as UTF-8.
 */
 
-static int utf8_char_bytes OF((ZCONST char *utf8));
-static ulg ucs4_char_from_utf8 OF((ZCONST char **utf8));
-static int utf8_to_ucs4_string OF((ZCONST char *utf8, ulg *ucs4buf,
-                                   int buflen));
 
 /* utility functions for managing UTF-8 and UCS-4 strings */
 
@@ -2712,8 +2766,10 @@ static int utf8_to_ucs4_string OF((ZCONST char *utf8, ulg *ucs4buf,
  * Returns the number of bytes used by the first character in a UTF-8
  * string, or -1 if the UTF-8 is invalid or null.
  */
-static int utf8_char_bytes(utf8)
+static int utf8_char_bytes( OFT( ZCONST char *) utf8)
+#ifdef NO_PROTO
   ZCONST char *utf8;
+#endif /* def NO_PROTO */
 {
   int      t, r;
   unsigned lead;
@@ -2751,8 +2807,10 @@ static int utf8_char_bytes(utf8)
  * Returns ~0 (= -1 in twos-complement notation) and does not advance the
  * pointer when input is ill-formed.
  */
-static ulg ucs4_char_from_utf8(utf8)
+static ulg ucs4_char_from_utf8( OFT( ZCONST char **) utf8)
+#ifdef NO_PROTO
   ZCONST char **utf8;
+#endif /* def NO_PROTO */
 {
   ulg  ret;
   int  t, bytes;
@@ -2774,14 +2832,17 @@ static ulg ucs4_char_from_utf8(utf8)
 
 
 #if 0 /* currently unused */
+
 /* utf8_from_ucs4_char - Convert UCS char to UTF-8
  *
  * Returns the number of bytes put into utf8buf to represent ch, from 1 to 6,
  * or -1 if ch is too large to represent.  utf8buf must have room for 6 bytes.
  */
-static int utf8_from_ucs4_char(utf8buf, ch)
+static int utf8_from_ucs4_char( OFT( char *) utf8buf, OFT( ulg) ch)
+#ifdef NO_PROTO
   char *utf8buf;
   ulg ch;
+#endif /* def NO_PROTO */
 {
   int trailing = 0;
   int leadmask = 0x80;
@@ -2819,10 +2880,14 @@ static int utf8_from_ucs4_char(utf8buf, ch)
  *
  * Return UCS count.  Now returns int so can return -1.
  */
-static int utf8_to_ucs4_string(utf8, ucs4buf, buflen)
+static int utf8_to_ucs4_string( OFT( ZCONST char *) utf8,
+                                OFT( ulg *) ucs4buf,
+                                OFT( int) buflen)
+#ifdef NO_PROTO
   ZCONST char *utf8;
   ulg *ucs4buf;
   int buflen;
+#endif /* def NO_PROTO */
 {
   int count = 0;
 
@@ -2843,15 +2908,43 @@ static int utf8_to_ucs4_string(utf8, ucs4buf, buflen)
 }
 
 
+/* convert UTF-8 string to wide string */
+
+zwchar *utf8_to_wide_string( OFT( ZCONST char *) utf8_string)
+#ifdef NO_PROTO
+  ZCONST char *utf8_string;
+#endif /* def NO_PROTO */
+{
+  int wcount;
+  zwchar *wide_string;
+
+  wcount = utf8_to_ucs4_string(utf8_string, NULL, 0);
+  if (wcount == -1)
+    return NULL;
+  if ((wide_string = (zwchar *) izu_malloc((wcount + 1) * sizeof(zwchar)))
+      == NULL) {
+    return NULL;
+  }
+  wcount = utf8_to_ucs4_string(utf8_string, wide_string, wcount + 1);
+
+  return wide_string;
+}
+
+
 #if 0 /* currently unused */
+
 /* ucs4_string_to_utf8
  *
  *
  */
-static int ucs4_string_to_utf8(ucs4, utf8buf, buflen)
+static int ucs4_string_to_utf8( OFT( ZCONST ulg *) ucs4,
+                                OFT( char *) utf8buf,
+                                OFT( int) buflen)
+#ifdef NO_PROTO
   ZCONST ulg *ucs4;
   char *utf8buf;
   int buflen;
+#endif /* def NO_PROTO */
 {
   char mb[6];
   int  count = 0;
@@ -2882,12 +2975,16 @@ static int ucs4_string_to_utf8(ucs4, utf8buf, buflen)
  *
  * Wrapper: counts the actual unicode characters in a UTF-8 string.
  */
-static int utf8_chars(utf8)
+static int utf8_chars( OTF( ZCONST char *) utf8)
+#ifdef NO_PROTO
   ZCONST char *utf8;
+#endif /* def NO_PROTO */
 {
   return utf8_to_ucs4_string(utf8, NULL, 0);
 }
+
 #endif /* 0 */
+
 
 /* --------------------------------------------------- */
 /* Unicode Support
@@ -2904,12 +3001,55 @@ static int utf8_chars(utf8)
  * different sizes of wchar_t.
  */
 
+/* convert multi-byte character string to wide character string */
+
+zwchar *local_to_wide_string( OFT( ZCONST char *) local_string)
+#ifdef NO_PROTO
+  ZCONST char *local_string;
+#endif /* def NO_PROTO */
+{
+  size_t wsize;
+  wchar_t *wc_string;
+  zwchar *wide_string;
+
+  /* for now try to convert as string - fails if a bad char in string */
+  wsize = mbstowcs(NULL, local_string, strlen(local_string) + 1);
+  if (wsize == (size_t)-1) {
+    /* could not convert */
+    return NULL;
+  }
+
+  /* convert it */
+  if ((wc_string = (wchar_t *)izu_malloc(
+   (wsize + 1) * sizeof(wchar_t))) == NULL) {
+    return NULL;
+  }
+  wsize = mbstowcs(wc_string, local_string, strlen(local_string) + 1);
+  wc_string[wsize] = (wchar_t) 0;
+
+  /* in case wchar_t is not zwchar */
+  if ((wide_string = (zwchar *)izu_malloc(
+   (wsize + 1) * sizeof(zwchar))) == NULL) {
+    izu_free( wc_string);
+    return NULL;
+  }
+  for (wsize = 0; (wide_string[wsize] = (zwchar)wc_string[wsize]); wsize++) ;
+  wide_string[wsize] = (zwchar) 0;
+  izu_free(wc_string);
+
+  return wide_string;
+}
+
+
 #if 0 /* currently unused */
+
 /* is_ascii_string
  * Checks if a string is all ascii
  */
-int is_ascii_string(mbstring)
+int is_ascii_string( OFT( ZCONST char *) mbstring)
+#ifdef NO_PROTO
   ZCONST char *mbstring;
+#endif /* def NO_PROTO */
 {
   char *p;
   uch c;
@@ -2922,12 +3062,65 @@ int is_ascii_string(mbstring)
   return 1;
 }
 
+
+/* convert wide string to UTF-8 */
+
+char *wide_to_utf8_string( OFT( ZCONST zwchar *) wide_string)
+#ifdef NO_PROTO
+  ZCONST zwchar *wide_string;
+#endif /* def NO_PROTO */
+{
+  int mbcount;
+  char *utf8_string;
+
+  /* get size of utf8 string */
+  mbcount = ucs4_string_to_utf8(wide_string, NULL, 0);
+  if (mbcount == -1)
+    return NULL;
+  if ((utf8_string = (char *) izu_malloc(mbcount + 1)) == NULL) {
+    return NULL;
+  }
+  mbcount = ucs4_string_to_utf8(wide_string, utf8_string, mbcount + 1);
+  if (mbcount == -1)
+    return NULL;
+
+  return utf8_string;
+}
+
+
+/* Duplicate.  An active one (different) occurs below. */
+
+zwchar *wchar_to_wide_string( OFT( wchar_t *) wchar_string)
+#ifdef NO_PROTO
+  wchar_t *wchar_string;
+#endif /* def NO_PROTO */
+{
+  int i;
+  int wchar_len;
+  zwchar *wide_string;
+
+  wchar_len = wcslen(wchar_string);
+
+  if ((wide_string = izu_malloc((wchar_len + 1) * sizeof(zwchar))) == NULL) {
+    return NULL;
+  }
+  for (i = 0; i <= wchar_len; i++) {
+    wide_string[i] = wchar_string[i];
+  }
+
+  return wide_string;
+}
+
+
 /* local to UTF-8 */
-char *local_to_utf8_string(local_string)
+char *local_to_utf8_string( OFT( ZCONST char *) local_string)
+#ifdef NO_PROTO
   ZCONST char *local_string;
+#endif /* def NO_PROTO */
 {
   return wide_to_utf8_string(local_to_wide_string(local_string));
 }
+
 # endif /* 0 */
 
 /* wide_to_escape_string
@@ -2963,8 +3156,10 @@ char *local_to_utf8_string(local_string)
  /* set this to the max bytes an escape can be */
 #  define MAX_ESCAPE_BYTES 8
 
-char *wide_to_escape_string(wide_char)
+char *wide_to_escape_string( OFT( zwchar) wide_char)
+#ifdef NO_PROTO
   zwchar wide_char;
+#endif /* def NO_PROTO */
 {
   int i;
   zwchar w = wide_char;
@@ -3001,9 +3196,13 @@ char *wide_to_escape_string(wide_char)
 }
 
 #if 0 /* currently unused */
+
 /* returns the wide character represented by the escape string */
-zwchar escape_string_to_wide(escape_string)
+
+zwchar escape_string_to_wide( OFT( ZCONST char *) escape_string)
+#ifdef NO_PROTO
   ZCONST char *escape_string;
+#endif /* def NO_PROTO */
 {
   int i;
   zwchar w;
@@ -3051,10 +3250,15 @@ zwchar escape_string_to_wide(escape_string)
 #endif /* 0 */
 
 #  ifndef WIN32  /* WIN32 supplies a special variant of this function */
+
 /* convert wide character string to multi-byte character string */
-char *wide_to_local_string(wide_string, escape_all)
+
+char *wide_to_local_string( OFT( ZCONST zwchar *) wide_string,
+                            OFT( int) escape_all)
+#ifdef NO_PROTO
   ZCONST zwchar *wide_string;
   int escape_all;
+#endif /* def NO_PROTO */
 {
   int i;
   wchar_t wc;
@@ -3126,10 +3330,15 @@ char *wide_to_local_string(wide_string, escape_all)
 }
 #  endif /* ndef WIN32 */
 
+
 #if 0 /* currently unused */
+
 /* convert local string to display character set string */
-char *local_to_display_string(local_string)
+
+char *local_to_display_string( OFT( ZCONST char *) local_string)
+#ifdef NO_PROTO
   ZCONST char *local_string;
+#endif /* def NO_PROTO */
 {
   char *display_string;
 
@@ -3155,25 +3364,16 @@ char *local_to_display_string(local_string)
     izu_free(display_string);
     display_string = ebc;
   }
-#  endif
+#  endif /* def EBCDIC */
 
   return display_string;
 }
-#endif /* 0 */
 
-/* UTF-8 to local */
-char *utf8_to_local_string(utf8_string, escape_all)
-  ZCONST char *utf8_string;
-  int escape_all;
-{
-  zwchar *wide = utf8_to_wide_string(utf8_string);
-  char *loc = wide_to_local_string(wide, escape_all);
-  izu_free(wide);
-  return loc;
-}
 
-wchar_t *wide_to_wchar_string(wide_string)
+wchar_t *wide_to_wchar_string( OFT( zwchar *) wide_string)
+#ifdef NO_PROTO
   zwchar *wide_string;
+#endif /* def NO_PROTO */
 {
   wchar_t *wstring;
   int i;
@@ -3193,12 +3393,35 @@ wchar_t *wide_to_wchar_string(wide_string)
   return wstring;
 }
 
-zwchar *wchar_to_wide_string(wchar_string)
-  wchar_t *wchar_string;
+#endif /* 0 */
+
+
+/* UTF-8 to local */
+
+char *utf8_to_local_string( OFT( ZCONST char *) utf8_string,
+                            OFT( int) escape_all)
+#ifdef NO_PROTO
+  ZCONST char *utf8_string;
+  int escape_all;
+#endif /* def NO_PROTO */
 {
-  zwchar *zwstring;
+  zwchar *wide = utf8_to_wide_string(utf8_string);
+  char *loc = wide_to_local_string(wide, escape_all);
+  izu_free(wide);
+  return loc;
+}
+
+
+/* Duplicate.  A disabled one (different) occurs above. */
+
+zwchar *wchar_to_wide_string( OFT( wchar_t *) wchar_string)
+#ifdef NO_PROTO
+  wchar_t *wchar_string;
+#endif /* def NO_PROTO */
+{
   int i;
   int wlen;
+  zwchar *zwstring;
 
   for (wlen = 0; wchar_string[wlen]; wlen++) ;
 
@@ -3215,92 +3438,14 @@ zwchar *wchar_to_wide_string(wchar_string)
 }
 
 
-/* convert multi-byte character string to wide character string */
-zwchar *local_to_wide_string(local_string)
-  ZCONST char *local_string;
-{
-  size_t wsize;
-  wchar_t *wc_string;
-  zwchar *wide_string;
-
-  /* for now try to convert as string - fails if a bad char in string */
-  wsize = mbstowcs(NULL, local_string, strlen(local_string) + 1);
-  if (wsize == (size_t)-1) {
-    /* could not convert */
-    return NULL;
-  }
-
-  /* convert it */
-  if ((wc_string = (wchar_t *)izu_malloc(
-   (wsize + 1) * sizeof(wchar_t))) == NULL) {
-    return NULL;
-  }
-  wsize = mbstowcs(wc_string, local_string, strlen(local_string) + 1);
-  wc_string[wsize] = (wchar_t) 0;
-
-  /* in case wchar_t is not zwchar */
-  if ((wide_string = (zwchar *)izu_malloc(
-   (wsize + 1) * sizeof(zwchar))) == NULL) {
-    izu_free( wc_string);
-    return NULL;
-  }
-  for (wsize = 0; (wide_string[wsize] = (zwchar)wc_string[wsize]); wsize++) ;
-  wide_string[wsize] = (zwchar) 0;
-  izu_free(wc_string);
-
-  return wide_string;
-}
-
-#if 0 /* currently unused */
-
-/* convert wide string to UTF-8 */
-char *wide_to_utf8_string(wide_string)
-  ZCONST zwchar *wide_string;
-{
-  int mbcount;
-  char *utf8_string;
-
-  /* get size of utf8 string */
-  mbcount = ucs4_string_to_utf8(wide_string, NULL, 0);
-  if (mbcount == -1)
-    return NULL;
-  if ((utf8_string = (char *) izu_malloc(mbcount + 1)) == NULL) {
-    return NULL;
-  }
-  mbcount = ucs4_string_to_utf8(wide_string, utf8_string, mbcount + 1);
-  if (mbcount == -1)
-    return NULL;
-
-  return utf8_string;
-}
-
-zwchar *wchar_to_wide_string(wchar_string)
-  wchar_t *wchar_string;
-{
-  int i;
-  int wchar_len;
-  zwchar *wide_string;
-
-  wchar_len = wcslen(wchar_string);
-
-  if ((wide_string = izu_malloc((wchar_len + 1) * sizeof(zwchar))) == NULL) {
-    return NULL;
-  }
-  for (i = 0; i <= wchar_len; i++) {
-    wide_string[i] = wchar_string[i];
-  }
-
-  return wide_string;
-}
-
-#endif /* 0 */
-
-
 #  if defined(UNICODE_SUPPORT) && defined(WIN32_WIDE)
 
-char *wchar_to_local_string(wchar_string, escape_all)
+char *wchar_to_local_string( OFT( wchar_t *) wchar_string,
+                             OFT( int) escape_all)
+#ifdef NO_PROTO
   wchar_t *wchar_string;
   int escape_all;
+#endif /* def NO_PROTO */
 {
   zwchar *wide_string = wchar_to_wide_string(wchar_string);
   char *local_string = wide_to_local_string(wide_string, escape_all);
@@ -3312,38 +3457,22 @@ char *wchar_to_local_string(wchar_string, escape_all)
 
 #  endif /* defined(UNICODE_SUPPORT) && defined(WIN32_WIDE) */
 
-
-/* convert UTF-8 string to wide string */
-zwchar *utf8_to_wide_string(utf8_string)
-  ZCONST char *utf8_string;
-{
-  int wcount;
-  zwchar *wide_string;
-
-  wcount = utf8_to_ucs4_string(utf8_string, NULL, 0);
-  if (wcount == -1)
-    return NULL;
-  if ((wide_string = (zwchar *) izu_malloc((wcount + 1) * sizeof(zwchar)))
-      == NULL) {
-    return NULL;
-  }
-  wcount = utf8_to_ucs4_string(utf8_string, wide_string, wcount + 1);
-
-  return wide_string;
-}
-
 # endif /* def UNICODE_WCHAR */
+
 #endif /* def UNICODE_SUPPORT */
-
-
 
 #ifdef USE_EF_UT_TIME
 
 # ifdef IZ_HAVE_UXUIDGID
-static int read_ux3_value(dbuf, uidgid_sz, p_uidgid)
+
+static int read_ux3_value( OFT( ZCONST uch *) dbuf,
+                           OFT( unsigned) uidgid_sz,
+                           OFT( ulg *) p_uidgid)
+#ifdef NO_PROTO
     ZCONST uch *dbuf;   /* buffer a uid or gid value */
     unsigned uidgid_sz; /* size of uid/gid value */
     ulg *p_uidgid;      /* return storage: uid or gid value */
+#endif /* def NO_PROTO */
 {
     zusz_t uidgid64;
 
@@ -3378,14 +3507,20 @@ static int read_ux3_value(dbuf, uidgid_sz, p_uidgid)
  * See note at getZip64Data().
  */
 
-unsigned ef_scan_for_izux(ef_buf, ef_len, ef_is_c, dos_mdatetime,
-                          z_utim, z_uidgid)
+unsigned ef_scan_for_izux( OFT( ZCONST uch *) ef_buf,
+                           OFT( long)  ef_len,
+                           OFT( int) ef_is_c,
+                           OFT( ulg) dos_mdatetime,
+                           OFT( iztimes *) z_utim,
+                           OFT( ulg *) z_uidgid)
+#ifdef NO_PROTO
     ZCONST uch *ef_buf; /* buffer containing extra field */
     long ef_len;        /* total length of extra field */
     int ef_is_c;        /* flag indicating "is central extra field" */
     ulg dos_mdatetime;  /* last_mod_file_date_time in DOS format */
     iztimes *z_utim;    /* return storage: atime, mtime, ctime */
     ulg *z_uidgid;      /* return storage: uid and gid */
+#endif /* def NO_PROTO */
 {
     unsigned flags = 0;
     unsigned eb_id;

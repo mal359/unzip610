@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2016 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2022 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -19,7 +19,7 @@
 #    define DATE_FORMAT DF_MDY
 #  endif
 #  define lenEOL          2
-#  define PutNativeEOL  {*q++ = native(CR); *q++ = native(LF);}
+#  define PutNativeEOL  {*q++ = native(CHR_CR); *q++ = native(CHR_LF);}
 #  define USE_FWRITE    /* write() fails to support textmode output */
 #  if (!defined(NOTIMESTAMP) && !defined(TIMESTAMP))
 #    define TIMESTAMP

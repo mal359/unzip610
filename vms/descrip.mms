@@ -2,10 +2,10 @@
 #
 #    UnZip 6.1 for VMS -- MMS (or MMK) Description File.
 #
-#    Last revised:  2018-12-04
+#    Last revised:  2022-08-08
 #
 #----------------------------------------------------------------------
-# Copyright (c) 2001-2018 Info-ZIP.  All rights reserved.
+# Copyright (c) 2001-2022 Info-ZIP.  All rights reserved.
 #
 # See the accompanying file LICENSE, version 2009-Jan-2 or later (the
 # contents of which are also included in zip.h) for terms of use.  If,
@@ -20,7 +20,6 @@
 # Note that this description file must be used from the main
 # distribution directory, not from the [.VMS] subdirectory.
 #
-# Optional macros:
 #
 #    AES_WG=1       Enable/disable AES (WinZip/Gladman) encryption
 #    NOAES_WG=1     support.  Specify either AES_WG=1 or NOAES_WG=1 to
@@ -30,8 +29,16 @@
 #                   LOCAL_UNZIP C macros to enable it.  (See
 #                   LOCAL_UNZIP, below.)
 #
+#    ARCH=arch_name  Do not determine host hardware architecture
+#                    automatically.  Use arch_name (ALPHA, IA64, VAX,
+#                   or X86_64), instead.
+#
 #    CCOPTS=xxx     Compile with CC options xxx.  For example:
 #                   CCOPTS=/ARCH=HOST
+#
+#    COM1=dcl_scr   Execute DCL script dcl_scr in the .FIRST rule.
+#                   For example, to use VSI x86-64 Cross-tools on IA64:
+#                   COM1=SYS$MANAGER:X86_XTOOLS$SYLOGIN.COM
 #
 #    DBG=1          Compile /DEBUG /NOOPTIMIZE.  Link /DEBUG /TRACEBACK.
 #    TRC=1          Default is /NOTRACEBACK, but TRC=1 enables link with
@@ -62,11 +69,11 @@
 #                   directory itself.
 #
 #    LARGE=1        Enable/disable large-file (>2GB) support.  Always
-#    NOLARGE=1      disabled on VAX.  Enabled by default on Alpha and
-#                   IA64.  On Alpha, by default, large-file support is
-#                   tested, and the build will fail if that test fails.
-#                   Specify NOLARGE=1 explicitly to disable support (and
-#                   to skip the test on Alpha).
+#    NOLARGE=1      disabled on VAX.  Enabled by default on non-VAX.  On
+#                   Alpha, by default, large-file support is tested, and
+#                   the build will fail if that test fails.  Specify
+#                   NOLARGE=1 explicitly to disable support (and to skip
+#                   the test on Alpha).
 #
 #    LIBUNZIP=1     Build LIBIZUNZIP.OLB as a callable UnZip library.
 #
@@ -303,6 +310,12 @@ CLEAN_ALL : CLEAN
 	 set protection = w:d VAX*.DIR;*
 	if (f$search( "VAX*.DIR", 2) .nes. "") then -
 	 delete /noconfirm VAX*.DIR;*
+	if (f$search( "[.X86_64*]*.*") .nes. "") then -
+	 delete /noconfirm [.X86_64*]*.*;*
+	if (f$search( "X86_64*.DIR", 1) .nes. "") then -
+	 set protection = w:d X86_64*.DIR;*
+	if (f$search( "X86_64*.DIR", 2) .nes. "") then -
+	 delete /noconfirm X86_64*.DIR;*
 	if (f$search( "help_temp_*.*") .nes. "") then -
 	 delete /noconfirm help_temp_*.*;*
 	if (f$search( "[.VMS]UNZIP_CLI.RNH") .nes. "") then -
@@ -315,7 +328,7 @@ CLEAN_ALL : CLEAN
 	 delete /noconfirm UNZIP.HLP;*
 	if (f$search( "UNZIP.HTX") .nes. "") then -
 	 delete /noconfirm UNZIP.HTX;*
-	if (f$search( "test_dir_*.DIR;*") .nes. "") then -
+	if (f$search( "[.test_dir_*...]*.*;*") .nes. "") then -
 	 set protection = w:d [.test_dir_*...]*.*;*
 	if (f$search( "test_dir_*.DIR;*") .nes. "") then -
 	 set protection = w:d test_dir_*.DIR;*

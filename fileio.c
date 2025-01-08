@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2017 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -254,9 +254,12 @@ static ZCONST char SetxattrFailed[] =
 /**************************/
 /* Function open_infile() */
 /**************************/
-int open_infile(__G__ which)
+
+int open_infile( __GX__ OFT( int) which)
+#ifdef NO_PROTO
   __GDEF
   int which;            /* 0: Primary archive; 1: Segment archive. */
+#endif /* def NO_PROTO */
 {
   /* Open an archive (zipfile) for reading and in BINARY mode to
    * prevent CR/LF translation, which would corrupt the data.
@@ -322,9 +325,12 @@ int open_infile(__G__ which)
 /***************************/
 /* Function close_infile() */
 /***************************/
-int close_infile( __G__ pfd)
+
+int close_infile( __GX__ OFT( zipfd_t *) pfd)
+#ifdef NO_PROTO
   __GDEF
   zipfd_t *pfd;
+#endif /* def NO_PROTO */
 {
   int sts = 0;
 
@@ -447,9 +453,12 @@ int set_zipfn_sgmnt_name( __G__ sgmnt_nr)
 /********************************/
 /* Function open_infile_sgmnt() */
 /********************************/
-int open_infile_sgmnt(__G__ movement)
+
+int open_infile_sgmnt( __GX__ OFT( int) movement)
+#ifdef NO_PROTO
   __GDEF
   int movement;
+#endif /* def NO_PROTO */
 {
   zipfd_t zipfd;
   zipfd_t zipfd_sgmnt;
@@ -510,9 +519,12 @@ int open_infile_sgmnt(__G__ movement)
 /***************************/
 /* Function open_outfile() */
 /***************************/
+/* return 1 if fail */
 
-int open_outfile(__G)           /* return 1 if fail */
+int open_outfile( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
   int r;
 
@@ -851,8 +863,10 @@ int open_outfile(__G)           /* return 1 if fail */
 /* function undefer_input() */
 /****************************/
 
-void undefer_input(__G)
+void undefer_input( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     if (G.incnt > 0)
         G.csize += G.incnt;
@@ -877,8 +891,10 @@ void undefer_input(__G)
 /* function defer_leftover_input() */
 /***********************************/
 
-void defer_leftover_input(__G)
+void defer_leftover_input( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     if ((zoff_t)G.incnt > G.csize) {
         /* (G.csize < MAXINT), we can safely cast it to int !! */
@@ -898,11 +914,14 @@ void defer_leftover_input(__G)
 /**********************/
 /* Function readbuf() */
 /**********************/
+/* return number of bytes read into buf */
 
-unsigned readbuf(__G__ buf, size)   /* return number of bytes read into buf */
+unsigned readbuf( __GX__ OFT( uch *) buf, OFT( register unsigned) size)
+#ifdef NO_PROTO
     __GDEF
     uch *buf;
     register unsigned size;
+#endif /* def NO_PROTO */
 {
     register unsigned count;
     unsigned n;
@@ -956,9 +975,12 @@ unsigned readbuf(__G__ buf, size)   /* return number of bytes read into buf */
 /***********************/
 /* Function readbyte() */
 /***********************/
+/* refill inbuf and return a byte if available, else EOF */
 
-int readbyte(__G)   /* refill inbuf and return a byte if available, else EOF */
+int readbyte( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     if (G.mem_mode)
         return EOF;
@@ -1048,9 +1070,12 @@ int readbyte(__G)   /* refill inbuf and return a byte if available, else EOF */
 /************************/
 /* Function fillinbuf() */
 /************************/
+ /* like readbyte() except returns number of bytes in inbuf */
 
-int fillinbuf(__G) /* like readbyte() except returns number of bytes in inbuf */
+int fillinbuf( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     if (G.mem_mode ||
                   (G.incnt = read(G.zipfd, (char *)G.inbuf, INBUFSIZ)) <= 0)
@@ -1098,9 +1123,11 @@ int fillinbuf(__G) /* like readbyte() except returns number of bytes in inbuf */
 /* Function seek_zipf() */
 /************************/
 
-int seek_zipf(__G__ abs_offset)
+int seek_zipf( __GX__ OFT( zoff_t) abs_offset)
+#ifdef NO_PROTO
     __GDEF
     zoff_t abs_offset;
+#endif /* def NO_PROTO */
 {
 /*
  *  Seek to the block boundary of the block which includes abs_offset,
@@ -1251,8 +1278,10 @@ int seek_zipf(__G__ abs_offset)
 /* Function fgets_ans() */
 /************************/
 
-int fgets_ans( __G)
+int fgets_ans( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     char *ans;
     int ret;
@@ -1285,11 +1314,13 @@ int fgets_ans( __G)
 /* Function flush() */   /* returns PK error codes: */
 /********************/   /* if tflag => always 0; PK_DISK if write error */
 
-int flush(__G__ rawbuf, size, unshrink)
+int flush( __GX__ OFT( uch *) rawbuf, OFT( ulg) size, OFT( int) unshrink)
+#ifdef NO_PROTO
     __GDEF
     uch *rawbuf;
     ulg size;
     int unshrink;
+#endif /* def NO_PROTO */
 # if defined(DEFLATE64_SUPPORT) && defined(__16BIT__)
 {
     int ret;
@@ -1753,22 +1784,22 @@ static int partflush(__G__ rawbuf, size, unshrink)
 
         /* else not VMS text */ {
             p = rawbuf;
-            if (*p == LF && G.didCRlast)
+            if (*p == CHR_LF && G.didCRlast)
                 ++p;
             G.didCRlast = FALSE;
             for (q = transbuf;  (extent)(p-rawbuf) < (extent)size;  ++p) {
-                if (*p == CR) {           /* lone CR or CR/LF: treat as EOL  */
+                if (*p == CHR_CR) {       /* lone CR or CR/LF: treat as EOL  */
                     PutNativeEOL
                     if ((extent)(p-rawbuf) == (extent)size-1)
                         /* last char in buffer */
                         G.didCRlast = TRUE;
-                    else if (p[1] == LF)  /* get rid of accompanying LF */
+                    else if (p[1] == CHR_LF)  /* get rid of accompanying LF */
                         ++p;
-                } else if (*p == LF)      /* lone LF */
+                } else if (*p == CHR_LF)      /* lone LF */
                     PutNativeEOL
                 else
 # ifndef DOS_FLX_OS2_W32
-                if (*p != CTRLZ)          /* lose all ^Z's */
+                if (*p != CHR_SUB)              /* lose all ^Z's */
 # endif
                     *q++ = native(*p);
 
@@ -1835,10 +1866,12 @@ static int partflush(__G__ rawbuf, size, unshrink)
  * Used "long" to accommodate any systems with 16-bit "int".)
  */
 
-static int is_vms_varlen_txt(__G__ ef_buf, ef_len)
+static int is_vms_varlen_txt( __GX__ OFT( uch *) ef_buf, OFT( long) ef_len)
+#ifdef NO_PROTO
     __GDEF
     uch *ef_buf;        /* buffer containing extra field */
     long ef_len;        /* total length of extra field */
+#endif /* def NO_PROTO */
 {
     unsigned eb_id;
     long eb_len;
@@ -1961,8 +1994,10 @@ static int is_vms_varlen_txt(__G__ ef_buf, ef_len)
 /* Function disk_error() */
 /*************************/
 
-static int disk_error(__G)
+static int disk_error( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     /* OK to use slide[] here because this file is finished regardless */
     /* 2013-02-04 SMS.
@@ -2007,11 +2042,16 @@ static int disk_error(__G)
 /* Function UzpMessagePrnt() */
 /*****************************/
 
-int UZ_EXP UzpMessagePrnt(pG, buf, size, flag)
+int UZ_EXP UzpMessagePrnt( OFT( zvoid *) pG,
+                           OFT( uch *) buf,
+                           OFT( ulg) size,
+                           OFT( int) flag)
+#ifdef NO_PROTO
     zvoid *pG;   /* globals struct:  always passed */
     uch *buf;    /* preformatted string to be printed */
     ulg size;    /* length of string (may include nulls) */
     int flag;    /* flag bits */
+#endif /* def NO_PROTO */
 {
     /* IMPORTANT NOTE:
      *    The name of the first parameter of UzpMessagePrnt(), which passes
@@ -2290,11 +2330,16 @@ int UZ_EXP UzpMessageNull(pG, buf, size, flag)
 /* Function UzpInput() */   /* GRR:  this is a placeholder for now */
 /***********************/
 
-int UZ_EXP UzpInput(pG, buf, size, flag)
+int UZ_EXP UzpInput( OFT( zvoid *) pG,
+                     OFT( uch *) buf,
+                     OFT( int *) size,
+                     OFT( int) flag)
+#ifdef NO_PROTO
     zvoid *pG;    /* globals struct:  always passed */
     uch *buf;     /* preformatted string to be printed */
     int *size;    /* (address of) size of buf and of returned string */
     int flag;     /* flag bits (bit 0: no echo) */
+#endif /* def NO_PROTO */
 {
     /* tell picky compilers to shut up about "unused variable" warnings */
     pG = pG; buf = buf; flag = flag;
@@ -2313,10 +2358,14 @@ int UZ_EXP UzpInput(pG, buf, size, flag)
 /* Function UzpMorePause() */
 /***************************/
 
-void UZ_EXP UzpMorePause(pG, prompt, flag)
+void UZ_EXP UzpMorePause( OFT( zvoid *) pG,
+                          OFT( ZCONST char *) prompt,
+                          OFT( int) flag)
+#ifdef NO_PROTO
     zvoid *pG;            /* globals struct:  always passed */
     ZCONST char *prompt;  /* "--More--" prompt */
     int flag;             /* 0 = any char OK; 1 = accept only '\n', ' ', q */
+#endif /* def NO_PROTO */
 {
     uch c;
     FILE *outfp;
@@ -2395,13 +2444,20 @@ void UZ_EXP UzpMorePause(pG, prompt, flag)
 /* Function UzpPassword() */
 /**************************/
 
-int UZ_EXP UzpPassword (pG, rcnt, pwbuf, size, zfn, efn)
+int UZ_EXP UzpPassword( OFT( zvoid *) pG,
+                        OFT( int *) rcnt,
+                        OFT( char *) pwbuf,
+                        OFT( int) size,
+                        OFT( ZCONST char *) zfn,
+                        OFT( ZCONST char *) efn)
+#ifdef NO_PROTO
     zvoid *pG;         /* pointer to UnZip's internal global vars */
     int *rcnt;         /* retry counter */
     char *pwbuf;       /* buffer for password */
     int size;          /* Usable size of password buffer */
     ZCONST char *zfn;  /* name of zip archive */
     ZCONST char *efn;  /* name of archive entry being processed */
+#endif /* def NO_PROTO */
 {
 # ifdef IZ_CRYPT_ANY
     int r = IZ_PW_ENTERED;
@@ -2459,9 +2515,12 @@ int UZ_EXP UzpPassword (pG, rcnt, pwbuf, size, zfn, efn)
 /**********************/
 /* Function handler() */
 /**********************/
+/* upon interrupt, turn on echo and exit cleanly */
 
-void handler(signal)   /* upon interrupt, turn on echo and exit cleanly */
+void handler( OFT( int) signal)
+#ifdef NO_PROTO
     int signal;
+#endif /* def NO_PROTO */
 {
     GETGLOBALS();
 
@@ -2528,8 +2587,10 @@ ZCONST ush ydays[] =
 /* Function dos_to_unix_time() */ /* used for freshening/updating/timestamps */
 /*******************************/
 
-time_t dos_to_unix_time(dosdatetime)
+time_t dos_to_unix_time( OFT( ulg) dosdatetime)
+#ifdef NO_PROTO
     ulg dosdatetime;
+#endif /* def NO_PROTO */
 {
     time_t m_time;
 
@@ -2734,9 +2795,15 @@ time_t dos_to_unix_time(dosdatetime)
 /* Function check_for_newer() */  /* used for overwriting/freshening/updating */
 /******************************/
 
-int check_for_newer(__G__ filename)  /* return 1 if existing file is newer */
-    __GDEF                           /*  or equal; 0 if older; -1 if doesn't */
-    char *filename;                  /*  exist yet */
+/* return 1 if existing file is newer or equal; 0 if older;
+ * -1 if doesn't exist yet.
+ */
+
+int check_for_newer( __GX__ OFT( char *) filename)
+#ifdef NO_PROTO
+    __GDEF
+    char *filename;
+#endif /* def NO_PROTO */
 {
     time_t existing, archive;
 # ifdef USE_EF_UT_TIME
@@ -2942,11 +3009,14 @@ int check_for_newerw(__G__ filenamew)  /* return 1 if existing file is newer */
 /************************/
 /* Function do_string() */
 /************************/
+/* return PK-type error code */
 
-int do_string(__G__ length, option)   /* return PK-type error code */
+int do_string( __GX__ OFT( unsigned int) length, OFT( int) option)
+#ifdef NO_PROTO
     __GDEF
     unsigned int length;        /* without prototype, ush converted to this */
     int option;
+#endif /* def NO_PROTO */
 {
     unsigned comment_bytes_left;
     unsigned int block_len;
@@ -3070,10 +3140,10 @@ int do_string(__G__ length, option)   /* return PK-type error code */
             G.outbuf[block_len] = '\0';
 
             /* remove all ASCII carriage returns from comment before printing
-             * (since used before A_TO_N(), check for CR instead of '\r')
+             * (since used before A_TO_N(), check for CHR_CR instead of '\r')
              */
             while (*p) {
-                while (*p == CR)
+                while (*p == CHR_CR)
                     ++p;
                 *q++ = *p++;
             }
@@ -3116,14 +3186,15 @@ int do_string(__G__ length, option)   /* return PK-type error code */
             while (*++p) {
                 int pause = FALSE;
 
-                if (*p == 0x1B) {          /* ASCII escape char */
+                if (*p == CHR_ESC) {        /* ASCII escape char */
                     *q++ = '^';
                     *q++ = '[';
-                } else if (*p == 0x13) {   /* ASCII ^S (pause) */
+                } else if (*p == CHR_DC3) { /* ASCII ^S XOFF (pause) */
                     pause = TRUE;
-                    if (p[1] == LF)        /* ASCII LF */
+                    if (p[1] == CHR_LF)     /* ASCII LF */
                         *q++ = *++p;
-                    else if (p[1] == CR && p[2] == LF) {  /* ASCII CR LF */
+                    else if ((p[1] == CHR_CR) &&
+                     (p[2] == CHR_LF)) {    /* ASCII CR+LF */
                         *q++ = *++p;
                         *q++ = *++p;
                     }
@@ -3183,7 +3254,7 @@ int do_string(__G__ length, option)   /* return PK-type error code */
                 return PK_MEM;
             G.fnfull_bufsize = fnbufsiz;
         }
-        if (readbuf(__G__ G.filename_full, length) == 0)
+        if (readbuf(__G__ (uch *)G.filename_full, length) == 0)
             return PK_EOF;
         G.filename_full[length] = '\0';      /* terminate w/zero:  ASCIIZ */
 
@@ -3533,8 +3604,10 @@ int do_string(__G__ length, option)   /* return PK-type error code */
 /* Function name_only() */
 /************************/
 
-char *name_only( path)
+char *name_only( OFT( char *) path)
+#ifdef NO_PROTO
     char *path;
+#endif /* def NO_PROTO */
 {
     /* Extract the name component from a path specification.
      * Returns pointer to allocated storage; NULL, if error.
@@ -3599,8 +3672,10 @@ char *name_only( path)
 /* Function makeword() */
 /***********************/
 
-ush makeword(b)
+ush makeword( OFT( ZCONST uch *) b)
+#ifdef NO_PROTO
     ZCONST uch *b;
+#endif /* def NO_PROTO */
 {
     /*
      * Convert Intel style 'short' integer to non-Intel non-16-bit
@@ -3616,8 +3691,10 @@ ush makeword(b)
 /* Function makelong() */
 /***********************/
 
-ulg makelong(sig)
+ulg makelong( OFT( ZCONST uch *) sig)
+#ifdef NO_PROTO
     ZCONST uch *sig;
+#endif /* def NO_PROTO */
 {
     /*
      * Convert intel style 'long' variable to non-Intel non-16-bit
@@ -3636,31 +3713,34 @@ ulg makelong(sig)
 /* Function makeint64() */
 /************************/
 
-zusz_t makeint64(sig)
+zusz_t makeint64( OFT( ZCONST uch *) sig)
+#ifdef NO_PROTO
     ZCONST uch *sig;
+#endif /* def NO_PROTO */
 {
 #ifdef LARGE_FILE_SUPPORT
     /*
      * Convert intel style 'int64' variable to non-Intel non-16-bit
      * host format.  This routine also takes care of byte-ordering.
      */
-    return (((zusz_t)sig[7]) << 56)
-        + (((zusz_t)sig[6]) << 48)
-        + (((zusz_t)sig[4]) << 32)
-        + (zusz_t)((((ulg)sig[3]) << 24)
-                 + (((ulg)sig[2]) << 16)
-                 + (((unsigned)sig[1]) << 8)
-                 + (sig[0]));
+    return (((zusz_t)sig[7]) << 56) +
+           (((zusz_t)sig[6]) << 48) +
+           (((zusz_t)sig[5]) << 40) +
+           (((zusz_t)sig[4]) << 32) +
+           (zusz_t)((((ulg)sig[3]) << 24) +
+                    (((ulg)sig[2]) << 16) +
+               (((unsigned)sig[1]) << 8) +
+                          (sig[0]));
 
 #else /* def LARGE_FILE_SUPPORT */
 
     if ((sig[7] | sig[6] | sig[5] | sig[4]) != 0)
         return (zusz_t)0xffffffffL;
     else
-        return (zusz_t)((((ulg)sig[3]) << 24)
-                      + (((ulg)sig[2]) << 16)
-                      + (((unsigned)sig[1]) << 8)
-                      + (sig[0]));
+        return (zusz_t)((((ulg)sig[3]) << 24) +
+                        (((ulg)sig[2]) << 16) +
+                   (((unsigned)sig[1]) << 8) +
+                              (sig[0]));
 
 #endif /* def LARGE_FILE_SUPPORT [else] */
 }
@@ -3671,13 +3751,17 @@ zusz_t makeint64(sig)
 /*********************/
 /* Function fzofft() */
 /*********************/
-
 /* Format a zoff_t value in a cylindrical buffer set. */
-char *fzofft(__G__ val, pre, post)
+
+char *fzofft( __GX__ OFT( zoff_t) val,
+                     OFT( ZCONST char *) pre,
+                     OFT( ZCONST char *) post)
+#ifdef NO_PROTO
     __GDEF
     zoff_t val;
     ZCONST char *pre;
     ZCONST char *post;
+#endif /* def NO_PROTO */
 {
     /* Storage cylinder. (now in globals.h) */
     /*static char fzofft_buf[FZOFFT_NUM][FZOFFT_LEN];*/
@@ -3758,9 +3842,11 @@ char *str2iso(dst, src)
 /* Function str2oem() */
 /**********************/
 
-char *str2oem(dst, src)
+char *str2oem( OFT( char *) dst, OFT( register ZCONST char *) src)
+#ifdef NO_PROTO
     char *dst;                          /* destination buffer */
     register ZCONST char *src;          /* source string */
+#endif /* def NO_PROTO */
 {
 #  ifdef INTERN_TO_OEM
     INTERN_TO_OEM(src, dst);
@@ -3877,9 +3963,14 @@ long int labs( l)
 /* Function zstrnicmp() */
 /************************/
 
-int zstrnicmp(s1, s2, n)
-    register ZCONST char *s1, *s2;
+int zstrnicmp( OFT( register ZCONST char *) s1,
+               OFT( register ZCONST char *) s2,
+               OFT( register unsigned) n)
+#ifdef NO_PROTO
+    register ZCONST char *s1;
+    register ZCONST char *s2;
     register unsigned n;
+#endif /* def NO_PROTO */
 {
     for (; n > 0;  --n, ++s1, ++s2) {
 
@@ -3928,9 +4019,11 @@ int zstat(p, s)
 /* Function plastchar() */
 /************************/
 
-char *plastchar(ptr, len)
+char *plastchar( OFT( ZCONST char *) ptr, OFT( extent) len)
+#ifdef NO_PROTO
     ZCONST char *ptr;
     extent len;
+#endif /* def NO_PROTO */
 {
     extent clen;
     ZCONST char *oldptr = ptr;
@@ -3951,8 +4044,10 @@ char *plastchar(ptr, len)
 /* Function uzmbclen() */
 /***********************/
 
-extent uzmbclen(ptr)
+extent uzmbclen( OFT( ZCONST unsigned char *) ptr)
+#ifdef NO_PROTO
     ZCONST unsigned char *ptr;
+#endif /* def NO_PROTO */
 {
     int mbl;
 
@@ -3975,9 +4070,12 @@ extent uzmbclen(ptr)
 /* Function uzmbschr() */
 /***********************/
 
-unsigned char *uzmbschr(str, c)
+unsigned char *uzmbschr( OFT( ZCONST unsigned char *) str,
+                         OFT( unsigned int) c)
+#ifdef NO_PROTO
     ZCONST unsigned char *str;
     unsigned int c;
+#endif /* def NO_PROTO */
 {
     while(*str != '\0'){
         if (*str == c) {return (unsigned char *)str;}
@@ -3995,9 +4093,12 @@ unsigned char *uzmbschr(str, c)
 /* Function uzmbsrchr() */
 /************************/
 
-unsigned char *uzmbsrchr(str, c)
+unsigned char *uzmbsrchr( OFT(ZCONST unsigned char *) str,
+                          OFT( unsigned int) c)
+#ifdef NO_PROTO
     ZCONST unsigned char *str;
     unsigned int c;
+#endif /* def NO_PROTO */
 {
     unsigned char *match = NULL;
     while(*str != '\0'){

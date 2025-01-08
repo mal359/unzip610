@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2017 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -89,9 +89,12 @@ static ZCONST char Far ShortFileTrailer[] =
 /*************************/
 /* Function list_files() */
 /*************************/
+/* return PK-type error code */
 
-int list_files(__G)     /* return PK-type error code */
+int list_files( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     int do_this_file = FALSE;
     int cfactor;
@@ -574,9 +577,12 @@ int list_files(__G)     /* return PK-type error code */
 /************************/
 /* Function fn_is_dir() */
 /************************/
+/* returns TRUE if G.filename is directory */
 
-static int fn_is_dir(__G)    /* returns TRUE if G.filename is directory */
+static int fn_is_dir( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     extent fn_len = strlen(G.filename);
     register char   endc;
@@ -592,11 +598,15 @@ static int fn_is_dir(__G)    /* returns TRUE if G.filename is directory */
 /*****************************/
 /* Function get_time_stamp() */
 /*****************************/
+/* return PK-type error code */
 
-int get_time_stamp(__G__ last_modtime, nmember)  /* return PK-type error code */
+int get_time_stamp( __GX__ OFT( time_t *) last_modtime,
+                           OFT( ulg *) nmember)
+#ifdef NO_PROTO
     __GDEF
     time_t *last_modtime;
     ulg *nmember;
+#endif /* def NO_PROTO */
 {
     int do_this_file = FALSE;
     int error;
@@ -766,8 +776,11 @@ error. */
 /* Function compr_fract() */    /* (Also used by ZipInfo routines.) */
 /**************************/
 
-int compr_fract(uc, c)
-    zusz_t uc, c;
+int compr_fract( OFT( zusz_t) uc, OFT( zusz_t) c)
+#ifdef NO_PROTO
+    zusz_t c;
+    zusz_t uc;
+#endif /* def NO_PROTO */
 {
     zusz_t denom;
 
@@ -791,9 +804,12 @@ int compr_fract(uc, c)
 /************************/
 /*  Function fnprint()  */    /* also used by ZipInfo routines */
 /************************/
+    /* print filename (after filtering) and newline */
 
-void fnprint(__G)    /* print filename (after filtering) and newline */
+void fnprint( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     char *name = fnfilter(G.filename, slide, (extent)(WSIZE>>1));
 

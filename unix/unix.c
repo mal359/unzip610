@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2018 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -154,6 +154,7 @@ typedef struct zdir {
     FILE *dirhandle;
     struct dirent *entry;
 } DIR
+
 DIR *opendir OF((ZCONST char *dirspec));
 void closedir OF((DIR *dirp));
 struct dirent *readdir OF((DIR *dirp));
@@ -207,9 +208,11 @@ struct dirent *readdir(dirp)
 /* Function do_wild() */   /* for porting: dir separator; match(ignore_case) */
 /**********************/
 
-char *do_wild(__G__ wildspec)
+char *do_wild( __GX__ OFT( ZCONST char *)wildspec)
+#ifdef NO_PROTO
     __GDEF
     ZCONST char *wildspec;  /* only used first time on a given dir */
+#endif /* def NO_PROTO */
 {
 /* these statics are now declared in SYSTEM_SPECIFIC_GLOBALS in unxcfg.h:
     static DIR *wild_dir = (DIR *)NULL;
@@ -350,9 +353,11 @@ char *do_wild(__G__ wildspec)
  * to preserve the archive permissions (always subject to -K, above).
  */
 
-static unsigned filtattr(__G__ perms)
+static unsigned filtattr( __GX__ OFT( unsigned)perms)
+#ifdef NO_PROTO
     __GDEF
     unsigned perms;
+#endif /* def NO_PROTO */
 {
     /* Keep setuid/setgid/tacky perms? */
     if (!uO.K_flag)
@@ -374,8 +379,10 @@ static unsigned filtattr(__G__ perms)
 /* Function mapattr() */
 /**********************/
 
-int mapattr(__G)
+int mapattr( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     int r;
     ulg tmp = G.crec.external_file_attributes;
@@ -521,9 +528,11 @@ int mapattr(__G)
 /*  Function mapname()  */
 /************************/
 
-int mapname(__G__ renamed)
+int mapname( __GX__ OFT( int)renamed)
+#ifdef NO_PROTO
     __GDEF
     int renamed;
+#endif /* def NO_PROTO */
 /*
  * returns:
  *  MPN_OK          - no problem detected
@@ -843,10 +852,12 @@ int mapname(__G__ renamed)
 /* Function checkdir() */
 /***********************/
 
-int checkdir(__G__ pathcomp, flag)
+int checkdir( __GX__ OFT( char *) pathcomp, OFT( int) flag)
+#ifdef NO_PROTO
     __GDEF
     char *pathcomp;
     int flag;
+#endif /* def NO_PROTO */
 /*
  * returns:
  *  MPN_OK          - no problem detected
@@ -1028,6 +1039,9 @@ int checkdir(__G__ pathcomp, flag)
 
 /* 2014-03-10 SMS.
  * Changed to create multiple directory levels, as needed.
+ * 2019-03-27 SMS.
+ * Added special handling for "/", which was being nulled out:
+ * https://sourceforge.net/p/infozip/bugs/56/
  */
 
 #if (!defined(SFX) || defined(SFX_EXDIR))
@@ -1062,7 +1076,8 @@ int checkdir(__G__ pathcomp, flag)
                 return MPN_NOMEM;
             }
             strcpy( tmproot, pathcomp);
-            if (tmproot[ G.rootlen- 1] == '/')
+            /* Trim trailing slash, unless that's all there is. */
+            if ((G.rootlen > 1) && (tmproot[ G.rootlen- 1] == '/'))
             {
                 tmproot[ --G.rootlen] = '\0';   /* Trim trailing slash. */
             }
@@ -1113,8 +1128,13 @@ int checkdir(__G__ pathcomp, flag)
                     *(slash++) = '/';           /* Restore the NUL'd slash. */
                 }
             } /* while  (Path segments.) */
-            tmproot[ G.rootlen++] = '/';        /* Append slash. */
-            tmproot[ G.rootlen] = '\0';         /* NUL terminate. */
+
+            if (tmproot[ G.rootlen- 1] != '/')
+            {                                   
+                tmproot[ G.rootlen++] = '/';    /* Append slash (as needed). */
+                tmproot[ G.rootlen] = '\0';     /* NUL terminate. */
+            }
+
             /* Right-size the rootpath storage. */
             if ((G.rootpath =
              (char *)izu_realloc( tmproot, (G.rootlen+ 1))) == NULL)
@@ -1179,12 +1199,18 @@ int mkdir(path, mode)
 
 
 #if (!defined(MTS) || defined(SET_DIR_ATTRIB))
-static int get_extattribs OF((__GPRO__ iztimes *pzt, ulg z_uidgid[2]));
 
-static int get_extattribs(__G__ pzt, z_uidgid)
+#if 0 /* 0 SMSd */
+static int get_extattribs OF((__GPRO__ iztimes *pzt, ulg z_uidgid[2]));
+#endif /* 0 SMSd */
+
+static int get_extattribs( __GX__ OFT( iztimes *)pzt,
+                                  OFT( ulg)z_uidgid OFT([2]))
+#ifdef NO_PROTO
     __GDEF
     iztimes *pzt;
     ulg z_uidgid[2];
+#endif /* def NO_PROTO */
 {
 /*---------------------------------------------------------------------------
     Convert from MSDOS-format local time and date to Unix-format 32-bit GMT
@@ -1238,9 +1264,12 @@ static int get_extattribs(__G__ pzt, z_uidgid)
 /****************************/
 /* Function close_outfile() */
 /****************************/
+/* GRR: change to return PK-style warning level */
 
-void close_outfile(__G)    /* GRR: change to return PK-style warning level */
+void close_outfile( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
     union {
         iztimes t3;             /* mtime, atime, ctime */
@@ -1504,9 +1533,11 @@ void close_outfile(__G)    /* GRR: change to return PK-style warning level */
 
 
 #if (defined(SYMLINKS) && defined(SET_SYMLINK_ATTRIBS))
-int set_symlnk_attribs(__G__ slnk_entry)
+int set_symlnk_attribs( __GX__ OFT( slinkentry *) slnk_entry)
+#ifdef NO_PROTO
     __GDEF
     slinkentry *slnk_entry;
+#endif /* def NO_PROTO */
 {
     if (slnk_entry->attriblen > 0) {
 
@@ -1564,9 +1595,11 @@ int set_symlnk_attribs(__G__ slnk_entry)
 # endif
 
 
-int defer_dir_attribs(__G__ pd)
+int defer_dir_attribs( __GX__ OFT( direntry **)pd)
+#ifdef NO_PROTO
     __GDEF
     direntry **pd;
+#endif /* def NO_PROTO */
 {
     uxdirattr *d_entry;
 
@@ -1587,9 +1620,11 @@ int defer_dir_attribs(__G__ pd)
 
 
 
-int set_direc_attribs(__G__ d)
+int set_direc_attribs( __GX__ OFT( direntry *)d)
+#ifdef NO_PROTO
     __GDEF
     direntry *d;
+#endif /* def NO_PROTO */
 {
     int errval = PK_OK;
 
@@ -1651,9 +1686,11 @@ int set_direc_attribs(__G__ d)
 /*  Function stamp_file()  */
 /***************************/
 
-int stamp_file(fname, modtime)
+int stamp_file( OFT( ZCONST char *)fname, OFT( time_t)modtime)
+# ifdef NO_PROTO
     ZCONST char *fname;
     time_t modtime;
+# endif /* def NO_PROTO */
 {
     ztimbuf tp;
 
@@ -1672,8 +1709,10 @@ int stamp_file(fname, modtime)
 /*  Function version()  */
 /************************/
 
-void version(__G)
+void version( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
 # if defined(__GNUC__)
    /* __GNUC__ is generated by gcc and gcc-based compilers */

@@ -2,10 +2,10 @@
 #
 #    UnZip 6.1 for VMS -- MMS (or MMK) Source Description File.
 #
-#    Last revised:  2018-11-23
+#    Last revised:  2022-06-10
 #
 #----------------------------------------------------------------------
-# Copyright (c) 2004-2018 Info-ZIP.  All rights reserved.
+# Copyright (c) 2004-2022 Info-ZIP.  All rights reserved.
 #
 # See the accompanying file LICENSE, version 2009-Jan-2 or later (the
 # contents of which are also included in zip.h) for terms of use.  If,
@@ -22,27 +22,40 @@ $$$$ THIS DESCRIPTION FILE IS NOT INTENDED TO BE USED THIS WAY.
 .ENDIF
 
 
-# Define MMK architecture macros when using MMS.
+# Define old MMK architecture macros when using MMS.
 
-.IFDEF __MMK__                  # __MMK__
-.ELSE                           # __MMK__
+.IFDEF MMS$ARCH_NAME            # MMS$ARCH_NAME
 ALPHA_X_ALPHA = 1
 IA64_X_IA64 = 1
 VAX_X_VAX = 1
 X86_64_X_X86_64 = 1
-.IFDEF $(MMS$ARCH_NAME)_X_ALPHA     # $(MMS$ARCH_NAME)_X_ALPHA
+.IFDEF ARCH                         # ARCH
+ARCH_NAME = $(ARCH)
+.ELSE                               # ARCH
+ARCH_NAME = $(MMS$ARCH_NAME)
+.ENDIF                              # ARCH
+.IFDEF $(ARCH_NAME)_X_ALPHA         # $(ARCH_NAME)_X_ALPHA
 __ALPHA__ = 1
-.ENDIF                              # $(MMS$ARCH_NAME)_X_ALPHA
-.IFDEF $(MMS$ARCH_NAME)_X_IA64      # $(MMS$ARCH_NAME)_X_IA64
+.ENDIF                              # $(ARCH_NAME)_X_ALPHA
+.IFDEF $(ARCH_NAME)_X_IA64          # $(ARCH_NAME)_X_IA64
 __IA64__ = 1
-.ENDIF                              # $(MMS$ARCH_NAME)_X_IA64
-.IFDEF $(MMS$ARCH_NAME)_X_VAX       # $(MMS$ARCH_NAME)_X_VAX
+.ENDIF                              # $(ARCH_NAME)_X_IA64
+.IFDEF $(ARCH_NAME)_X_VAX           # $(ARCH_NAME)_X_VAX
 __VAX__ = 1
-.ENDIF                              # $(MMS$ARCH_NAME)_X_VAX
-.IFDEF $(MMS$ARCH_NAME)_X_X86_64    # $(MMS$ARCH_NAME)_X_X86_64
+.ENDIF                              # $(ARCH_NAME)_X_VAX
+.IFDEF $(ARCH_NAME)_X_X86_64        # $(ARCH_NAME)_X_X86_64
 __X86_64__ = 1
-.ENDIF                              # $(MMS$ARCH_NAME)_X_X86_64
-.ENDIF                          # __MMK__
+.ENDIF                              # $(ARCH_NAME)_X_X86_64
+.ELSE                           # MMS$ARCH_NAME
+.IFDEF __MMK__                      # __MMK__
+.IFDEF ARCH                             # ARCH
+.IFDEF __$(ARCH)__                          # __$(ARCH)__
+.ELSE                                       # __$(ARCH)__
+__$(ARCH)__ = 1
+.ENDIF                                      # __$(ARCH)__                      
+.ENDIF                                  # ARCH
+.ENDIF                              # __MMK__
+.ENDIF                          # MMS$ARCH_NAME
 
 # Combine command-line VAX C compiler macros.
 
@@ -55,38 +68,39 @@ VAXC_OR_FORCE_VAXC = 1
 .ENDIF                          # VAXC
 
 # Analyze architecture-related and option macros.
+# (Sense x86_64 before IA64 for old MMK and x86_64 cross tools.)
 
-.IFDEF __ALPHA__                # __ALPHA__
+.IFDEF __X86_64__               # __X86_64__
 DECC = 1
-DESTM = ALPHA
-.ELSE                           # __ALPHA__
+DESTM = X86_64
+.ELSE                           # __X86_64__
 .IFDEF __IA64__                     # __IA64__
 DECC = 1
 DESTM = IA64
 .ELSE                               # __IA64__
-.IFDEF __VAX__                          # __VAX__
-.IFDEF VAXC_OR_FORCE_VAXC                   # VAXC_OR_FORCE_VAXC
+.IFDEF __ALPHA__                        # __ALPHA__
+DECC = 1
+DESTM = ALPHA
+.ELSE                                   # __ALPHA__
+.IFDEF __VAX__                              # __VAX__
+.IFDEF VAXC_OR_FORCE_VAXC                       # VAXC_OR_FORCE_VAXC
 DESTM = VAXV
-.ELSE                                       # VAXC_OR_FORCE_VAXC
-.IFDEF GNUC                                     # GNUC
+.ELSE                                           # VAXC_OR_FORCE_VAXC
+.IFDEF GNUC                                         # GNUC
 CC = GCC
 DESTM = VAXG
-.ELSE                                           # GNUC
+.ELSE                                               # GNUC
 DECC = 1
 DESTM = VAX
-.ENDIF                                          # GNUC
-.ENDIF                                      # VAXC_OR_FORCE_VAXC
-.ELSE                                   # __VAX__
-.IFDEF __X86_64__                           # __X86_64__
-DECC = 1
-DESTM = X86_64
-.ELSE                                       # __X86_64__
+.ENDIF                                              # GNUC
+.ENDIF                                          # VAXC_OR_FORCE_VAXC
+.ELSE                                       # __VAX__
 DESTM = UNK
 UNK_DEST = 1
-.ENDIF                                      # __X86_64__
-.ENDIF                                  # __VAX__
+.ENDIF                                      # __VAX__
+.ENDIF                                  # __ALPHA__
 .ENDIF                              # __IA64__
-.ENDIF                          # __ALPHA__
+.ENDIF                          # __X86_64__
 
 # AES_WG support.  Default to enabled, but the .FIRST rule will detect
 # the absence of the optional source kit, and advise/fail accordingly.
@@ -233,8 +247,29 @@ IZ_BZIP2 = SYS$DISK:[.BZIP2]
 LIB_BZ2_DEP = $(LIB_BZ2_LOCAL)
 BUILD_BZIP2 = 1
 .IFDEF LARGE                            # LARGE
-IZ_BZIP2_MACROS = /MACRO = (LARGE=1)
+IZ_BZIP2_LARGE = LARGE=1
+IZ_BZIP2_MACS = 1
 .ENDIF                                  # LARGE
+.IFDEF ARCH                             # ARCH
+.IFDEF IZ_BZIP2_MACS                        # IZ_BZIP2_MACS
+IZ_BZIP2_ARCH = , ARCH=$(ARCH)
+.ELSE                                       # IZ_BZIP2_MACS
+IZ_BZIP2_ARCH = ARCH=$(ARCH)
+IZ_BZIP2_MACS = 1
+.ENDIF                                      # IZ_BZIP2_MACS
+.ENDIF                                  # ARCH
+.IFDEF COM1                             # COM1
+.IFDEF IZ_BZIP2_MACS                        # IZ_BZIP2_MACS
+IZ_BZIP2_COM1 = , COM1=$(COM1)
+.ELSE                                       # IZ_BZIP2_MACS
+IZ_BZIP2_COM1 = COM1=$(COM1)
+IZ_BZIP2_MACS = 1
+.ENDIF                                      # IZ_BZIP2_MACS
+.ENDIF                                  # COM1
+.IFDEF IZ_BZIP2_MACS                    # IZ_BZIP2_MACS
+IZ_BZIP2_MACROS = \
+ /MACRO = ($(IZ_BZIP2_LARGE) $(IZ_BZIP2_ARCH) $(IZ_BZIP2_COM1))
+.ENDIF                                  # IZ_BZIP2_MACS
 .ENDIF                              # IZ_BZIP2
 .ENDIF                          # NOIZ_BZIP2
 
@@ -481,6 +516,10 @@ NON_VAX_CMPL = 1
 .ENDIF                                  # NON_VAX_CMPL
 .ENDIF                              # VAX_MULTI_CMPL
 .ENDIF                          # UNK_DEST
+.IFDEF COM1                     # COM1
+        @$(COM1)
+.ENDIF                          # COM1
+
 
 # AES_WG options.
 
@@ -621,35 +660,29 @@ LFLAGS_ARCH =
 # LINK NOSYSSHR options.
 
 .IFDEF NOSYSSHR                 # NOSYSSHR
-.IFDEF __ALPHA__                    # __ALPHA__
-NOSYSSHR_OPTS = , SYS$LIBRARY:STARLET.OLB /LIBRARY\
- /INCLUDE = CMA$TIS /NOSYSSHR
-.ELSE                               # __ALPHA__
-.IFDEF __IA64__                         # __IA64__
-NOSYSSHR_OPTS = , SYS$LIBRARY:STARLET.OLB /LIBRARY\
- /INCLUDE = CMA$TIS /NOSYSSHR
-.ELSE                                   # __IA64__
-OLDVAX_OLDVAX = 1
-.IFDEF DECC                                 # DECC
-.IFDEF OLDVAX_$(NOSYSSHR)                       # OLDVAX_$(NOSYSSHR)
+.IFDEF __VAX__                      # __VAX__
+.IFDEF DECC                             # DECC
+.IFDEF OLDVAX_$(NOSYSSHR)                   # OLDVAX_$(NOSYSSHR)
 NOSYSSHR_OPTS = , SYS$LIBRARY:DECCRTL.OLB /LIBRARY\
  /INCLUDE = CMA$TIS /NOSYSSHR
-.ELSE                                           # OLDVAX_$(NOSYSSHR)
+.ELSE                                       # OLDVAX_$(NOSYSSHR)
 NOSYSSHR_OPTS = , SYS$LIBRARY:DECCRTL.OLB /LIBRARY\
  /INCLUDE = (CMA$TIS, CMA$TIS_VEC) /NOSYSSHR
-.ENDIF                                          # OLDVAX_$(NOSYSSHR)
-.ELSE                                       # DECC
-.IFDEF OLDVAX_$(NOSYSSHR)                       # OLDVAX_$(NOSYSSHR)
+.ENDIF                                      # OLDVAX_$(NOSYSSHR)
+.ELSE                                   # DECC
+.IFDEF OLDVAX_$(NOSYSSHR)                   # OLDVAX_$(NOSYSSHR)
 NOSYSSHR_OPTS = , SYS$LIBRARY:VAXCRTL.OLB /LIBRARY,\
  SYS$LIBRARY:IMAGELIB.OLB /LIBRARY /NOSYSSHR
-.ELSE                                           # OLDVAX_$(NOSYSSHR)
+.ELSE                                       # OLDVAX_$(NOSYSSHR)
 NOSYSSHR_OPTS = , SYS$LIBRARY:VAXCRTL.OLB /LIBRARY,\
  SYS$LIBRARY:DECCRTL.OLB /LIBRARY /INCLUDE = CMA$TIS,\
  SYS$LIBRARY:IMAGELIB.OLB /LIBRARY /NOSYSSHR
-.ENDIF                                          # OLDVAX_$(NOSYSSHR)
-.ENDIF                                      # DECC
-.ENDIF                                  # __IA64__
-.ENDIF                              # __ALPHA__
+.ENDIF                                      # OLDVAX_$(NOSYSSHR)
+.ENDIF                                  # DECC
+.ELSE                               # __VAX__
+NOSYSSHR_OPTS = , SYS$LIBRARY:STARLET.OLB /LIBRARY\
+ /INCLUDE = CMA$TIS /NOSYSSHR
+.ENDIF                              # __VAX__
 .ELSE                           # NOSYSSHR
 NOSYSSHR_OPTS =
 .ENDIF                          # NOSYSSHR

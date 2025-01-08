@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2013 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -419,9 +419,12 @@ static int zlib_outCB(pG, outbuf, outcnt)
 /*  Function UZinflate()  */
 /**************************/
 
-int UZinflate(__G__ is_defl64)
+int UZinflate( __GX__ OFT( int) is_defl64)
+#ifdef NO_PROTO
     __GDEF
     int is_defl64;
+#endif /* def NO_PROTO */
+
 /* decompress an inflated entry using the zlib routines */
 {
     int retval = 0;     /* return code: 0 = "no error" */
@@ -994,10 +997,16 @@ static ZCONST unsigned dbits = 6;
 #   define SLIDE_MEMMOVE_disabled       /* Some testing suggests unhelpful. */
 #  endif
 
-int inflate_codes(__G__ tl, td, bl, bd)
-     __GDEF
-struct huft *tl, *td;   /* literal/length and distance decoder tables */
-unsigned bl, bd;        /* number of bits decoded by tl[] and td[] */
+int inflate_codes( __GX__ OFT( struct huft *) tl,
+                          OFT( struct huft *) td,
+                          OFT( unsigned) bl,
+                          OFT( unsigned) bd)
+#ifdef NO_PROTO
+struct huft *tl;        /* literal/length and distance decoder tables */
+struct huft *td;
+unsigned bl;            /* number of bits decoded by tl[] and td[] */
+unsigned bd;
+#endif /* def NO_PROTO */
 /* inflate (decompress) the codes in a deflated (compressed) block.
    Return an error code or zero if it all goes ok. */
 {
@@ -1163,9 +1172,12 @@ cleanup_and_exit:
 
 
 
-static int inflate_stored(__G)
-     __GDEF
 /* "decompress" an inflated type 0 (stored) block. */
+
+static int inflate_stored( __GX)
+#ifdef NO_PROTO
+     __GDEF
+#endif /* def NO_PROTO */
 {
   UINT_D64 w;           /* current window position (deflate64: up to 64k!) */
   unsigned n;           /* number of bytes in block */
@@ -1227,11 +1239,15 @@ struct huft *fixed_td;
 int fixed_bl, fixed_bd;
 #endif
 
-static int inflate_fixed(__G)
-     __GDEF
+
 /* decompress an inflated type 1 (fixed Huffman codes) block.  We should
    either replace this with a custom decoder, or at least precompute the
    Huffman tables. */
+
+static int inflate_fixed( __GX)
+#ifdef NO_PROTO
+     __GDEF
+#endif /* def NO_PROTO */
 {
   /* if first time, set up tables for fixed blocks */
   Trace((stderr, "\nliteral block"));
@@ -1287,9 +1303,11 @@ static int inflate_fixed(__G)
 
 
 
-static int inflate_dynamic(__G)
+static int inflate_dynamic( __GX)
+#ifdef NO_PROTO
   __GDEF
 /* decompress an inflated type 2 (dynamic Huffman codes) block. */
+#endif /* def NO_PROTO */
 {
   unsigned i;           /* temporary variables */
   unsigned j;
@@ -1478,10 +1496,13 @@ cleanup_and_exit:
 
 
 
-static int inflate_block(__G__ e)
+/* decompress an inflated block */
+
+static int inflate_block( __GX__ OFT( int *) e)
+#ifdef NO_PROTO
   __GDEF
   int *e;               /* last block flag */
-/* decompress an inflated block */
+#endif /* def NO_PROTO */
 {
   unsigned t;           /* block type */
   register ulg b;       /* bit buffer */
@@ -1529,10 +1550,13 @@ cleanup_and_exit:
 
 
 
-int inflate(__G__ is_defl64)
+/* decompress an inflated entry */
+
+int inflate( __GX__ OFT( int) is_defl64)
+#ifdef NO_PROTO
     __GDEF
     int is_defl64;
-/* decompress an inflated entry */
+#endif /* def NO_PROTO */
 {
   int e;                /* last block flag */
   int r;                /* result code */
@@ -1617,8 +1641,10 @@ int inflate(__G__ is_defl64)
 
 
 
-int inflate_free(__G)
+int inflate_free( __GX)
+#ifdef NO_PROTO
     __GDEF
+#endif /* def NO_PROTO */
 {
   if (G.fixed_tl != (struct huft *)NULL)
   {
@@ -1643,7 +1669,14 @@ int inflate_free(__G)
 #define N_MAX 288       /* maximum number of codes in any set */
 
 
-int huft_build(__G__ b, n, s, d, e, t, m)
+int huft_build( __GX__ OFT( ZCONST unsigned *) b,
+                       OFT( unsigned) n,
+                       OFT( unsigned) s,
+                       OFT( ZCONST ush *) d,
+                       OFT( ZCONST uch *) e,
+                       OFT( struct huft **) t,
+                       OFT( unsigned *) m)
+#ifdef NO_PROTO
   __GDEF
   ZCONST unsigned *b;   /* code lengths in bits (all assumed <= BMAX) */
   unsigned n;           /* number of codes (assumed <= N_MAX) */
@@ -1652,6 +1685,8 @@ int huft_build(__G__ b, n, s, d, e, t, m)
   ZCONST uch *e;        /* list of extra bits for non-simple codes */
   struct huft **t;      /* result: starting table */
   unsigned *m;          /* maximum lookup bits, returns actual */
+#endif /* def NO_PROTO */
+
 /* Given a list of code lengths and a maximum table size, make a set of
    tables to decode that set of codes.  Return zero on success, one if
    the given code set is incomplete (the tables are still built in this
@@ -1849,8 +1884,10 @@ int huft_build(__G__ b, n, s, d, e, t, m)
 
 
 
-int huft_free(t)
+int huft_free( OFT( struct huft *) t)
+#ifdef NO_PROTO
 struct huft *t;         /* table to free */
+#endif /* def NO_PROTO */
 /* Free the malloc'ed tables built by huft_build(), which makes a linked
    list of the tables it made, with the links in a dummy first entry of
    each table. */

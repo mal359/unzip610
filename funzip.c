@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2014 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -230,10 +230,13 @@ __GDEF
 #endif /* USE_ZLIB */
 
 
-static void err(n, m)
+/* Exit on error with a message and a code */
+
+static void err( OFT( int) n, OFT( char *) m)
+#ifdef NO_PROTO
 int n;
 char *m;
-/* Exit on error with a message and a code */
+#endif /* def NO_PROTO */
 {
   Info(slide, 1, ((char *)slide, "funzip error: %s\n", m));
   DESTROYGLOBALS();
@@ -255,8 +258,12 @@ extent w;       /* number of bytes to flush */
 }
 
 
-int flush(w)    /* used by inflate.c (FLUSH macro) */
+    /* used by inflate.c (FLUSH macro) */
+
+int flush( OFT( ulg) w)
+#ifdef NO_PROTO
 ulg w;          /* number of bytes to flush */
+#endif /* def NO_PROTO */
 {
     uch *rawbuf;
     int ret;
@@ -278,8 +285,10 @@ ulg w;          /* number of bytes to flush */
 
 #else /* defined(DEFLATE64_SUPPORT) && defined(__16BIT__) */
 
-int flush(w)    /* used by inflate.c (FLUSH macro) */
+int flush( OFT( ulg) w)
+#ifdef NO_PROTO
 ulg w;          /* number of bytes to flush */
+#endif /* def NO_PROTO */
 {
   G.crc32val = crc32(G.crc32val, slide, (extent)w);
   if (fwrite((char *)slide,1,(extent)w,out) != (extent)w && !PIPE_ERROR)
@@ -296,10 +305,13 @@ ulg w;          /* number of bytes to flush */
  * Used "long" to accommodate any systems with 16-bit "int".)
  */
 
-int main(argc, argv)
+/* Given a zipfile on stdin, decompress the first entry to stdout. */
+
+int main( OFT( int) argc, OFT( char **) argv)
+#ifdef NO_PROTO
 int argc;
 char **argv;
-/* Given a zipfile on stdin, decompress the first entry to stdout. */
+#endif /* def NO_PROTO */
 {
   unsigned eb_id;
   long eb_len;

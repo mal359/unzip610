@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2016 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -97,8 +97,10 @@ static void  partial_clear  OF((__GPRO__ int lastcodeused));
 /* Function unshrink() */
 /***********************/
 
-int unshrink(__G)
+int unshrink( __GX)
+#ifdef NO_PROTO
      __GDEF
+#endif /* def NO_PROTO */
 {
     uch *stacktop = stack + (HSIZE - 1);
     register uch *newstr;
@@ -304,9 +306,11 @@ int unshrink(__G)
 /* Function partial_clear() */      /* no longer recursive... */
 /****************************/
 
-static void partial_clear(__G__ lastcodeused)
+static void partial_clear(__GX__ OFT( int) lastcodeused)
+#ifdef NO_PROTO
     __GDEF
     int lastcodeused;
+#endif /* def NO_PROTO */
 {
     register shrint code;
 

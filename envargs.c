@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 1990-2018 Info-ZIP.  All rights reserved.
+  Copyright (c) 1990-2023 Info-ZIP.  All rights reserved.
 
   See the accompanying file LICENSE, version 2009-Jan-02 or later
   (the contents of which are also included in unzip.h) for terms of use.
@@ -47,10 +47,16 @@ static int count_args OF((ZCONST char *));
 
 /* envargs() returns PK-style error code */
 
-int envargs(Pargc, Pargv, envstr, envstr2)
+int envargs( OFT( int *) Pargc,
+             OFT( char ***) Pargv,
+             OFT( ZCONST char *) envstr,
+             OFT( ZCONST char *) envstr2)
+#ifdef NO_PROTO
     int *Pargc;
     char ***Pargv;
-    ZCONST char *envstr, *envstr2;
+    ZCONST char *envstr;
+    ZCONST char *envstr2;
+#endif /* def NO_PROTO */
 {
     char *envptr;       /* value returned by getenv */
     char *bufptr;       /* copy of env info */
@@ -180,8 +186,10 @@ int envargs(Pargc, Pargv, envstr, envstr2)
 
 
 
-static int count_args(s)
+static int count_args( OFT( ZCONST char *) s)
+#ifdef NO_PROTO
     ZCONST char *s;
+#endif /* def NO_PROTO */
 {
     int count = 0;
     char ch;
