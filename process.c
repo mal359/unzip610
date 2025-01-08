@@ -2683,11 +2683,15 @@ int getUnicodeData( __GX__ OFT( ZCONST uch *) ef_buf, OFT( long) ef_len)
           /* filename CRC */
           G.unipath_checksum = makelong(offset + ef_buf);
           offset += 4;
+		  
+          if (!G.filename_full) {
+            /* Check if we have a unicode extra section but no filename set */
+            return PK_ERR;
+          }
 
           /*
            * Compute 32-bit crc
            */
-
           chksum = crc32(chksum, (uch *)(G.filename_full),
                          strlen(G.filename_full));
 

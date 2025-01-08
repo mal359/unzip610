@@ -3411,6 +3411,8 @@ int do_string( __GX__ OFT( unsigned int) length, OFT( int) option)
                 memset( (char *)G.extra_field+ len_rb, 0, (length- len_rb));
                 length = len_rb;
             }
+            if (len_rb != length)
+                return PK_ERR;
             /* Looks like here is where extra fields are read. */
             /* 2014-12-17 SMS.  (oCERT.org report.)
              * Added test to detect (and message to notify user of)
