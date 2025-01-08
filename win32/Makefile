@@ -29,8 +29,8 @@
 #                         =1 force recognition of UTF8 extra fields and
 #                            "UTF8 name" attrib (default)
 #
-#   USEASM              : use assembler code for crc32 function (default)
-#   NOASM               : use C implementation for crc32 function
+#   USEASM              : use assembler code for crc32 function
+#   NOASM               : use C implementation for crc32 function (default)
 #   USEMASM             : use MS macro assembler (MASM) to assemble crc32 code
 #   USEML               : use MS macro assembler (ML driver) to create crc32
 #                         (default: use C inline assembler code for crc32)
@@ -122,7 +122,8 @@ BZIPLIBDLL=
 
 !ifndef APPLY_ASMCRC
 #default ASM CRC code (inline asm in C source) for now...
-APPLY_ASMCRC=1
+#crazy bad idea; don't do this. MAL 2025
+APPLY_ASMCRC=0
 !endif
 
 !ifndef USE_IZTIMEZONE
@@ -136,7 +137,7 @@ USE_UTF8=1
 !endif
 
 !IF "$(CPU)" == ""  &&  "$(PROCESSOR_ARCHITECTURE)" == "x86"
-CPU = i386
+CPU = X86
 !ENDIF
 !IF "$(CPU)" == ""  &&  "$(PROCESSOR_ARCHITECTURE)" == "MIPS"
 CPU = $(PROCESSOR_ARCHITECTURE)
@@ -147,8 +148,17 @@ CPU = $(PROCESSOR_ARCHITECTURE)
 !IF "$(CPU)" == ""  &&  "$(PROCESSOR_ARCHITECTURE)" == "PPC"
 CPU = $(PROCESSOR_ARCHITECTURE)
 !ENDIF
+!IF "$(CPU)" == ""  &&  "$(PROCESSOR_ARCHITECTURE)" == "X64"
+CPU = $(PROCESSOR_ARCHITECTURE)
+!ENDIF
+!IF "$(CPU)" == ""  &&  "$(PROCESSOR_ARCHITECTURE)" == "I64"
+CPU = $(PROCESSOR_ARCHITECTURE)
+!ENDIF
+!IF "$(CPU)" == ""  &&  "$(PROCESSOR_ARCHITECTURE)" == "ARM64"
+CPU = $(PROCESSOR_ARCHITECTURE)
+!ENDIF
 !IF "$(CPU)" == ""
-CPU = i386
+CPU = X86
 !ENDIF
 
 # special subdirectory for the static library binaries, to separate them
@@ -269,6 +279,17 @@ cflags = $(cflags) -D_X86_=1
 !ELSE
 !IF "$(CPU)" == "ALPHA"
 cflags = $(cflags) -D_ALPHA_=1
+!ELSE
+!IF "$(CPU)" == "X64"
+cflags = $(cflags) -D_AMD64_=1 -D_WIN64
+!ELSE
+!IF "$(CPU)" == "ARM64"
+cflags = $(cflags) -D_ARM64_=1 -D_WIN64
+!ELSE
+!IF "$(CPU)" == "IA64"
+cflags = $(cflags) -D_IA64_=1 -D_WIN64
+!ENDIF
+!ENDIF
 !ENDIF
 !ENDIF
 
