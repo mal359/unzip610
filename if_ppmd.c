@@ -53,7 +53,7 @@
 typedef struct
 {
   IByteIn p;
-  Bool extra;
+  BoolInt extra;
   SRes res;
   struct Globals *pG;                   /* Useless? */
 } CByteInToLook;
@@ -134,7 +134,7 @@ int g_ppmd8_alloc( __GPRO__ int size)
 
 /* Return Ppmd8_DecodeSymbol() value.
  */
-Bool g_ppmd8_decode_symbol( __GPRO)
+BoolInt g_ppmd8_decode_symbol( __GPRO)
 {
   return Ppmd8_DecodeSymbol( &(G_PPMD_P->ppmd8));
 }
@@ -190,10 +190,13 @@ zvoid g_ppmd8_prep( __GPRO__ Byte p_r_b( zvoid *))
 
 
 /* Return Ppmd8_RangeDec_Init() value.
+ *
+ * API change after SMS-included
+ * v.16.02  MAL 2025-01-08
  */
-Bool g_ppmd8_range_dec_init( __GPRO)
+BoolInt g_ppmd8_range_dec_init( __GPRO)
 {
-  return Ppmd8_RangeDec_Init( &(G_PPMD_P->ppmd8));
+  return Ppmd8_Init_RangeDec( &(G_PPMD_P->ppmd8));
 }
 
 

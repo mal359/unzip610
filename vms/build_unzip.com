@@ -981,12 +981,14 @@ $     if (NOLZMA .le. 0)
 $     then
 $         cc 'DEF_UNX' /object = [.'dest']LZFIND.OBJ [.LZMA]LZFIND.C
 $         cc 'DEF_UNX' /object = [.'dest']LZMADEC.OBJ [.LZMA]LZMADEC.C
+$         cc 'DEF_UNX' /object = [.'dest']CPUARCH.OBJ [.LZMA]CPUARCH.C
 $     endif
 $!
 $     if (NOPPMD .le. 0)
 $     then
 $         cc 'DEF_UNX' /object = [.'dest']PPMD8.OBJ [.PPMD]PPMD8.C
 $         cc 'DEF_UNX' /object = [.'dest']PPMD8DEC.OBJ [.PPMD]PPMD8DEC.C
+$         cc 'DEF_UNX' /object = [.'dest']CPUARCHP.OBJ [.PPMD]CPUARCHP.C
 $     endif
 $!
 $! Create the callable library link options file, if needed.
@@ -1069,14 +1071,16 @@ $     if (NOLZMA .le. 0)
 $     then
 $         libr /object /replace 'lib_unzip' -
            [.'dest']LZFIND.OBJ, -
-           [.'dest']LZMADEC.OBJ
+           [.'dest']LZMADEC.OBJ, -
+           [.'dest']CPUARCH.OBJ
 $     endif
 $!
 $     if (NOPPMD .le. 0)
 $     then
 $         libr /object /replace 'lib_unzip' -
            [.'dest']PPMD8.OBJ, -
-           [.'dest']PPMD8DEC.OBJ
+           [.'dest']PPMD8DEC.OBJ, -
+           [.'dest']CPUARCHP.OBJ
 $     endif
 $!
 $! Create the callable UnZip object library and link options file.
@@ -1134,14 +1138,16 @@ $         if (NOLZMA .le. 0)
 $         then
 $             libr /object /replace 'lib_libunzip' -
                [.'dest']LZFIND.OBJ, -
-               [.'dest']LZMADEC.OBJ
+               [.'dest']LZMADEC.OBJ, -
+               [.'dest']CPUARCH.OBJ
 $         endif
 $!
 $         if (NOPPMD .le. 0)
 $         then
 $             libr /object /replace 'lib_libunzip' -
                [.'dest']PPMD8.OBJ, -
-               [.'dest']PPMD8DEC.OBJ
+               [.'dest']PPMD8DEC.OBJ, -
+               [.'dest']CPUARCHP.OBJ
 $         endif
 $!
 $     endif
@@ -1321,14 +1327,16 @@ $     if (NOLZMA .le. 0)
 $     then
 $         libr /object /replace 'lib_unzipsfx' -
            [.'dest']LZFIND.OBJ, -
-           [.'dest']LZMADEC.OBJ
+           [.'dest']LZMADEC.OBJ, -
+           [.'dest']CPUARCH.OBJ
 $     endif
 $!
 $     if (NOPPMD .le. 0)
 $     then
 $         libr /object /replace 'lib_unzipsfx' -
            [.'dest']PPMD8.OBJ, -
-           [.'dest']PPMD8DEC.OBJ
+           [.'dest']PPMD8DEC.OBJ, -
+           [.'dest']CPUARCHP.OBJ
 $     endif
 $!
 $ endif

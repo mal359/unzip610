@@ -430,7 +430,7 @@ H_LZMA   = lzma/LzFind.h    \
            lzma/LzHash.h    \
            lzma/LzmaDec.h   \
            lzma/SzTypes.h   \
-           lzma/SzVersion.h
+           lzma/SzVersion.h 
 
 # C header files: PPMd compression
 H_PPMD   = ppmd/Ppmd.h      \
@@ -552,11 +552,13 @@ O_AES    = $(PROD)/aescrypt.o   \
 
 # object files: LZMA compression
 O_LZMA   = $(PROD)/LzFind.o     \
-           $(PROD)/LzmaDec.o
+           $(PROD)/LzmaDec.o    \
+           $(PROD)/CpuArch.o
 
 # object files: PPMd compression
 O_PPMD   = $(PROD)/Ppmd8.o      \
-           $(PROD)/Ppmd8Dec.o
+           $(PROD)/Ppmd8Dec.o   \
+           $(PROD)/CpuArchP.o
 
 # object files: ZLIB compression
 # - N/A.  ZLIB is not built as part of UnZip.
@@ -1008,6 +1010,9 @@ $(PROD)/LzFind.o:   lzma/LzFind.c     $(H_LZMA)
 $(PROD)/LzmaDec.o:  lzma/LzmaDec.c    $(H_LZMA)
 	$(CC) -c $(CF) -o $@ lzma/LzmaDec.c
 
+$(PROD)/LzmaDec.o:  lzma/CpuArch.c    $(H_LZMA)
+	$(CC) -c $(CF) -o $@ lzma/CpuArch.c
+
 #----------------------------------------------------------------------------
 
 # C Compile rules: PPMd compression
@@ -1017,6 +1022,9 @@ $(PROD)/Ppmd8.o:    ppmd/Ppmd8.c      $(H_PPMD)
 
 $(PROD)/Ppmd8Dec.o: ppmd/Ppmd8Dec.c   $(H_PPMD)
 	$(CC) -c $(CF) -o $@ ppmd/Ppmd8Dec.c
+
+$(PROD)/CpuArchP.o: ppmd/CpuArchP.c   $(H_PPMD)
+	$(CC) -c $(CF) -o $@ ppmd/CpuArchP.c
 
 #----------------------------------------------------------------------------
 #  Build rules: Assemble (.S -> .o)

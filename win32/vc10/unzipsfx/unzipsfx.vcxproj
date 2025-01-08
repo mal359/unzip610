@@ -171,6 +171,7 @@
     <ClInclude Include="..\..\..\lzma\Precomp.h" />
     <ClInclude Include="..\..\..\lzma\SzTypes.h" />
     <ClInclude Include="..\..\..\lzma\SzVersion.h" />
+    <ClInclude Include="..\..\..\lzma\SzWindows.h" />
     <ClInclude Include="..\..\..\ppmd\Compiler.h" />
     <ClInclude Include="..\..\..\ppmd\CpuArch.h" />
     <ClInclude Include="..\..\..\ppmd\Ppmd.h" />
@@ -178,6 +179,7 @@
     <ClInclude Include="..\..\..\ppmd\Precomp.h" />
     <ClInclude Include="..\..\..\ppmd\SzTypes.h" />
     <ClInclude Include="..\..\..\ppmd\SzVersion.h" />
+    <ClInclude Include="..\..\..\ppmd\SzWindows.h" />
     <ClInclude Include="..\..\nt.h" />
     <ClInclude Include="..\..\rsxntwin.h" />
     <ClInclude Include="..\..\w32cfg.h" />
@@ -202,6 +204,8 @@
     <ClCompile Include="..\..\..\wrap\aescrypt.c" />
     <ClCompile Include="..\..\..\wrap\aeskey.c" />
     <ClCompile Include="..\..\..\wrap\aestab.c" />
+    <ClCompile Include="..\..\..\wrap\CpuArch.c" />
+    <ClCompile Include="..\..\..\wrap\CpuArchP.c" />
     <ClCompile Include="..\..\..\wrap\crc_i386.c" />
     <ClCompile Include="..\..\..\wrap\fileenc.c" />
     <ClCompile Include="..\..\..\wrap\hmac.c" />
