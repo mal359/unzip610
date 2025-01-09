@@ -4229,9 +4229,32 @@ void version(__G)
       "(Windows NT v3.5 SDK)",
 #    elif (_MSC_VER == 900)
       "(Visual C++ v2.x)",
-#    elif (_MSC_VER > 900)
-      (sprintf(buf2, "(Visual C++ %d.%d)", _MSC_VER/100 - 6, _MSC_VER%100/10),
+#    elif (900 < _MSC_VER && _MSC_VER <= 1800)
+      (sprintf(buf2, "(Visual C++ v%d.%d)", _MSC_VER/100 - 6, _MSC_VER%100/10),
         buf2),
+#    elif (_MSC_VER == 1900)
+      "(Visual C++ v14.0)",
+#    elif (_MSC_VER == 1910)
+      "(Visual C++ v15.0)",
+#    elif (_MSC_VER == 1911)
+      "(Visual C++ v15.3)",
+#    elif (1912 <= _MSC_VER && _MSC_VER < 1920)
+      (sprintf(buf2, "(Visual C++ v%d.%d)", _MSC_VER/100 - 4,
+        _MSC_VER%100 - 7), buf2),
+#    elif (1920 <= _MSC_VER && _MSC_VER < 1927)
+      (sprintf(buf2, "(Visual C++ v%d.%d)", _MSC_VER/100 - 3,
+        _MSC_VER%100 - 20), buf2),
+#    elif (192829333 <= _MSC_FULL_VER && _MSC_FULL_VER < 192829910)
+      "(Visual C++ v16.8)",
+#    elif (192829910 <= _MSC_FULL_VER && _MSC_FULL_VER < 192929917)
+      "(Visual C++ v16.9)",
+#    elif (192929917 <= _MSC_FULL_VER && _MSC_FULL_VER < 192930129)
+      "(Visual C++ v16.10)",
+#    elif (192930129 <= _MSC_FULL_VER && _MSC_FULL_VER < 193000000)
+      "(Visual C++ v16.11)",
+#    elif (_MSC_VER >= 1930)
+      (sprintf(buf2, "(Visual C++ v%d.%d)", _MSC_VER/100 - 2,
+        _MSC_VER%100 - 30), buf2),
 #    else
       "(bad version)",
 #    endif
@@ -4306,13 +4329,29 @@ void version(__G)
 #   endif /* ?compilers */
 
 #   ifdef _WIN64
-      "\nWindows NT family", " (64-bit)",
+#    ifdef _IA64_
+	  "Windows NT", " (Itanium)",
+#    elif defined _ARM64_
+      "Windows NT", " (ARM 64-bit)",
+#    else
+      "Windows NT", " (x64)",
+#    endif
 #   else
-      "\nWindows 9x or NT family", " (32-bit)",
+#    ifdef _MIPS_
+      "Windows NT", " (MIPS)",
+#    elif defined _ALPHA_
+      "Windows NT", " (Alpha AXP)",
+#    elif defined _PPC_
+      "Windows NT", " (PowerPC)",
+#    elif defined _ARM_
+      "Windows RT", " (ARM)",
+#    else
+      "Windows 9x/NT", " (Intel)",
+#    endif
 #   endif
 
 #   if defined( __DATE__) && !defined( NO_BUILD_DATE)
-      " on ", __DATE__
+      "\non ", __DATE__
 #   else
       "", ""
 #   endif

@@ -4,10 +4,11 @@
 #   J. Lee 8/95 (johnnyl@microsoft.com)
 #   C. Spieler 03/99
 #
-# Last revised:  06 Jan 2009
+# Last revised:  01 Jan 2025
 #
 # Tested with VC++ 2.0 for NT for MIPS and Alpha, Visual C++ 2.2 for Intel CPUs
-# Revision tested with VC++ 5.0, 6.0, 8.0 and 9.0 for Intel CPUs
+# Revision tested with VC++ 5.0, 6.0, 8.0, 9.0 for Intel CPUs and VS2022 for
+# AMD64.
 #
 # Option switches
 # (specify OPTFLAG as "OPTFLAG={1|0}" on the nmake command line)
@@ -136,7 +137,10 @@ USE_IZTIMEZONE=0
 USE_UTF8=1
 !endif
 
-!IF "$(CPU)" == ""  &&  "$(PROCESSOR_ARCHITECTURE)" == "x86"
+!IF "$(CPU)" == ""  &&  ( "$(PROCESSOR_ARCHITECTURE)" == "x86" \
+						|| "$(PROCESSOR_ARCHITECTURE)" == "i386" \
+						|| "$(PROCESSOR_ARCHITECTURE)" == "i686" \
+						|| "$(PROCESSOR_ARCHITECTURE)" == "Intel" )
 CPU = X86
 !ENDIF
 !IF "$(CPU)" == ""  &&  "$(PROCESSOR_ARCHITECTURE)" == "MIPS"
@@ -148,17 +152,25 @@ CPU = $(PROCESSOR_ARCHITECTURE)
 !IF "$(CPU)" == ""  &&  "$(PROCESSOR_ARCHITECTURE)" == "PPC"
 CPU = $(PROCESSOR_ARCHITECTURE)
 !ENDIF
-!IF "$(CPU)" == ""  &&  "$(PROCESSOR_ARCHITECTURE)" == "X64"
+!IF "$(CPU)" == ""  &&  "$(PROCESSOR_ARCHITECTURE)" == "ARM"
 CPU = $(PROCESSOR_ARCHITECTURE)
 !ENDIF
-!IF "$(CPU)" == ""  &&  "$(PROCESSOR_ARCHITECTURE)" == "I64"
-CPU = $(PROCESSOR_ARCHITECTURE)
+!IF "$(CPU)" == ""  &&  ( "$(PROCESSOR_ARCHITECTURE)" == "x64" \
+						|| "$(PROCESSOR_ARCHITECTURE)" == "AMD64" \
+						|| "$(PROCESSOR_ARCHITECTURE)" == "Intel64" \
+						|| "$(PROCESSOR_ARCHITECTURE)" == "x86_64" )
+CPU = AMD64
+!ENDIF
+!IF "$(CPU)" == ""  &&  ( "$(PROCESSOR_ARCHITECTURE)" == "I64" \
+						|| "$(PROCESSOR_ARCHITECTURE)" == "IA64" \
+						|| "$(PROCESSOR_ARCHITECTURE)" == "Itanium" )
+CPU = IA64
 !ENDIF
 !IF "$(CPU)" == ""  &&  "$(PROCESSOR_ARCHITECTURE)" == "ARM64"
 CPU = $(PROCESSOR_ARCHITECTURE)
 !ENDIF
 !IF "$(CPU)" == ""
-CPU = X86
+CPU = AMD64
 !ENDIF
 
 # special subdirectory for the static library binaries, to separate them
@@ -274,13 +286,22 @@ hc     = hcrtf -xn
 
 # declarations common to all compiler options
 cflags = -c -W3 -DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo
-!IF "$(CPU)" == "i386"
+!IF "$(CPU)" == "X86"
 cflags = $(cflags) -D_X86_=1
+!ELSE
+!IF "$(CPU)" == "MIPS"
+cflags = $(cflags) -D_MIPS_=1
 !ELSE
 !IF "$(CPU)" == "ALPHA"
 cflags = $(cflags) -D_ALPHA_=1
 !ELSE
-!IF "$(CPU)" == "X64"
+!IF "$(CPU)" == "PPC"
+cflags = $(cflags) -D_PPC_=1
+!ELSE
+!IF "$(CPU)" == "ARM"
+cflags = $(cflags) -D_ARM_=1
+!ELSE
+!IF "$(CPU)" == "AMD64"
 cflags = $(cflags) -D_AMD64_=1 -D_WIN64
 !ELSE
 !IF "$(CPU)" == "ARM64"
@@ -288,6 +309,10 @@ cflags = $(cflags) -D_ARM64_=1 -D_WIN64
 !ELSE
 !IF "$(CPU)" == "IA64"
 cflags = $(cflags) -D_IA64_=1 -D_WIN64
+!ENDIF
+!ENDIF
+!ENDIF
+!ENDIF
 !ENDIF
 !ENDIF
 !ENDIF
