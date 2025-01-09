@@ -6158,7 +6158,11 @@ void version(__G)
     len = sprintf((char *)slide, LoadFarString(CompiledWith),
 
 # ifdef __GNUC__
+#  ifdef __clang__
+      "LLVM Clang ", __VERSION__,
+#  else
       "gcc ", __VERSION__,
+#  endif
 # else /* def __GNUC__ */
 #  if defined(DECC) || defined(__DECC) || defined (__DECC__)
       "DEC C",

@@ -136,6 +136,10 @@ static ZCONST char Far PathTooLongTrunc[] =
    static ZCONST char Far CantCreateExtractDir[] =
      "checkdir:  cannot create extraction directory: %s\n";
 #endif
+#ifdef SET_DIR_ATTRIB
+static ZCONST char CannotSetItemTimestamps[] =
+  "warning:  cannot set modif./access times for %s\n          %s\n";
+#endif
 
 #ifndef __GNUC__
    /* all supported non-gcc compilers provide MSC/DOS style mkdir() */
@@ -220,6 +224,19 @@ FEA2LIST, *PFEA2LIST;
 #endif /* !__32BIT__ */
 
 
+#ifdef SET_DIR_ATTRIB
+typedef struct uxdirattr {      /* struct for holding unix style directory */
+    struct uxdirattr *next;     /*  info until can be sorted and set at end */
+    char *fn;                   /* filename of directory */
+    union {
+        iztimes t3;             /* mtime, atime, ctime */
+        ztimbuf t2;             /* modtime, actime */
+    } u;
+    unsigned perms;             /* same as min_info.file_attr */
+    char fnbuf[1];              /* buffer stub for directory name */
+} uxdirattr;
+#define UxAtt(d)  ((uxdirattr *)d)    /* typecast shortcut */
+#endif /* SET_DIR_ATTRIB */
 
 
 
@@ -321,7 +338,7 @@ long GetFileTime(ZCONST char *name)
 
 static int SetFileTime(ZCONST char *name, ulg stamp)   /* swiped from Zip */
 {
-  FILESTATUS fs;
+  FILESTATUS3 fs;
   USHORT fd, ft;
 
   if (DosQueryPathInfo((PSZ) name, FIL_STANDARD, (PBYTE) &fs, sizeof(fs)))
@@ -462,11 +479,12 @@ static void SetPathAttrTimes(__GPRO__ int flags, int dir)
 #else
   USHORT nAction;
 #endif
-  FILESTATUS fs;
+  FILESTATUS3 fs;
   USHORT nLength;
   char szName[CCHMAXPATH];
   ulg Mod_dt, Acc_dt, Cre_dt;
   int gotTimes;
+  APIRET rc;
 
   strcpy(szName, G.filename);
   nLength = strlen(szName);
@@ -518,7 +536,7 @@ static void SetPathAttrTimes(__GPRO__ int flags, int dir)
   }
   else
   {
-    DosSetFileInfo(hFile, FIL_STANDARD, (PBYTE) &fs, sizeof(fs));
+    rc = DosSetFileInfo(hFile, FIL_STANDARD, (PBYTE) &fs, sizeof(fs));
     DosClose(hFile);
   }
 }
@@ -2170,10 +2188,12 @@ void version(__G)
 
 #if defined(__GNUC__)
 #  ifdef __EMX__  /* __EMX__ is defined as "1" only (sigh) */
-      "emx+gcc ", __VERSION__,
+      "emx/gcc ", __VERSION__,
 #  else
-      "gcc ", __VERSION__,
+      "GNU C ", __VERSION__,
 #  endif
+#elif defined(__HIGHC__)
+	  "Metaware High C ", /* no way to get version, ref: Watt-32 */
 #elif defined(__IBMC__)
       "IBM ",
 #  if (__IBMC__ < 200)
@@ -2183,8 +2203,13 @@ void version(__G)
 #  else
       (sprintf(buf, "Visual Age C++ %d.%02d", __IBMC__/100,__IBMC__%100), buf),
 #  endif
-#elif defined(__WATCOMC__)
-      "Watcom C", (sprintf(buf, " (__WATCOMC__ = %d)", __WATCOMC__), buf),
+#  if (__WATCOMC__ >= 1200)
+	  "Open Watcom C", (sprintf(buf, " %d.%d", (__WATCOMC__ / 100) - 11, 
+		(__WATCOMC__ % 100) / 10, buf),
+#  else
+      "Watcom C", (sprintf(buf, " %d.%d", __WATCOMC__/100,
+        __WATCOMC__ % 100), buf),
+#  endif
 #elif defined(__TURBOC__)
 #  ifdef __BORLANDC__
       "Borland C++",
@@ -2405,3 +2430,47 @@ void os2GlobalsCtor(__GPRO)
 }
 
 #endif /* !FUNZIP */
+
+#ifdef SET_DIR_ATTRIB
+int defer_dir_attribs(__G__ pd)
+    __GDEF
+    direntry **pd;
+{
+    uxdirattr *d_entry;
+
+    d_entry = (uxdirattr *)malloc(sizeof(uxdirattr) + strlen(G.filename));
+    *pd = (direntry *)d_entry;
+    if (d_entry == (uxdirattr *)NULL) {
+        return PK_MEM;
+    }
+    d_entry->fn = d_entry->fnbuf;
+    strcpy(d_entry->fn, G.filename);
+
+    d_entry->perms = G.pInfo->file_attr;
+    d_entry->u.t3.mtime = dos_to_unix_time(G.lrec.last_mod_dos_datetime);
+    d_entry->u.t3.atime = dos_to_unix_time(G.lrec.last_mod_dos_datetime);
+
+    return PK_OK;
+} /* end function defer_dir_attribs() */
+
+
+int set_direc_attribs(__G__ d)
+    __GDEF
+    direntry *d;
+{
+    int errval = PK_OK;
+
+    /* Skip restoring directory time stamps on user' request. */
+    if (uO.D_flag <= 0) {
+        /* restore directory timestamps */
+        if (utime(d->fn, &UxAtt(d)->u.t2)) {
+            Info(slide, 0x201, ((char *)slide, CannotSetItemTimestamps,
+              FnFilter1(d->fn), strerror(errno)));
+            if (!errval)
+                errval = PK_WARN;
+        }
+    }
+    return errval;
+} /* end function set_direc_attribs() */
+
+#endif /* SET_DIR_ATTRIB */

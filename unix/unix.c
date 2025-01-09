@@ -1786,7 +1786,7 @@ void version( __GX)
         cc_versbuf),
 #  else
 #   if defined(__MINGW64__)
-      (sprintf( cc_namebuf, "MinGW 64 GCC "),
+      (sprintf( cc_namebuf, "MinGW-64 GCC "),
        cc_namebuf),
       (sprintf( cc_versbuf, "%d.%d.%d",
                 __GNUC__,
@@ -1795,7 +1795,7 @@ void version( __GX)
        cc_versbuf),
 #   else
 #    if defined(__MINGW32__)
-      (sprintf( cc_namebuf, "MinGW 32 GCC "),
+      (sprintf( cc_namebuf, "mingw32 GCC "),
        cc_namebuf),
       (sprintf( cc_versbuf, "%d.%d.%d",
                 __GNUC__,
@@ -1823,7 +1823,7 @@ void version( __GX)
        cc_versbuf),
 #      else
 #       if defined(__APPLE_CC__)
-      (sprintf( cc_namebuf, "LLVM Apple GCC "),
+      (sprintf( cc_namebuf, "Apple LLVM Compiler "),
        cc_namebuf),
       (sprintf( cc_versbuf, "%d.%d.%d",
                 __GNUC__,
@@ -1859,21 +1859,25 @@ void version( __GX)
                 __PATHCC_PATCHLEVEL__ ),
        cc_versbuf),
 #       else
-#        if defined(__INTEL_COMPILER)
+#        if defined(__CODEGEARC__)
+      (sprintf( cc_namebuf, "Embarcadero C++ "),
+       cc_namebuf),
+#        else
+#         if defined(__INTEL_COMPILER)
       (sprintf( cc_namebuf, "Intel C compiler "),
        cc_namebuf),
-#         if defined(__INTEL_COMPILER_BUILD_DATE)
+#          if defined(__INTEL_COMPILER_BUILD_DATE)
       (sprintf( cc_versbuf, "%d.%d (%s)",
                 (__INTEL_COMPILER / 100),
                 (__INTEL_COMPILER % 100),
                 __INTEL_COMPILER_BUILD_DATE ),
        cc_versbuf),
-#         else
+#          else
       (sprintf( cc_versbuf, "%d.%d",
                 (__INTEL_COMPILER / 100),
                 (__INTEL_COMPILER % 100) ),
        cc_versbuf),
-#         endif /* (__INTEL_COMPILER_BUILD_DATE) */
+#          endif /* (__INTEL_COMPILER_BUILD_DATE) */
 #        else
 #         if defined(__GNUC_PATCHLEVEL__)
       (sprintf( cc_namebuf, "GCC "),
@@ -1885,8 +1889,9 @@ void version( __GX)
        cc_versbuf),
 #         else
       "GCC ", __VERSION__,
-#         endif /* (__GNUC_PATCHLEVEL__) */
-#        endif /* (__INTEL_COMPILER) */
+#          endif /* (__GNUC_PATCHLEVEL__) */
+#         endif /* (__INTEL_COMPILER) */
+#        endif /* (__CODEGEARC__) */
 #       endif /* (__PATHCC__) */
 #      endif /* (__PCC__) */
 #     endif /* (__llvm__) */
@@ -1972,13 +1977,14 @@ void version( __GX)
 #         define IZ_CC_NAME "cc"
 #        endif
       IZ_CC_NAME, "",
-#       endif /* ?__VERSION__ */
-#      endif /* ?__IBMC__ */
-#     endif /* ?(CRAY && _RELEASE) */
-#    endif /* ?__DECC_VER */
-#   endif /* ?__HP_cc */
-#  endif /* ?__SUNPRO_C */
-# endif /* ?__GNUC__ */
+#        endif /* ?__VERSION__ */
+#       endif /* ?__IBMC__ */
+#      endif /* ?(CRAY && _RELEASE) */
+#     endif /* ?__DECC_VER */
+#    endif /* ?__HP_cc */
+#   endif /* ?__SUNPRO_C */
+#  endif /* ?__GNUC__ */
+# endif /* ?__clang__ */
 
 # ifndef IZ_OS_NAME
 #  define IZ_OS_NAME "Unix"
@@ -1989,23 +1995,45 @@ void version( __GX)
       " (Silicon Graphics IRIX)",
 # else
 #  ifdef sun
-#    if defined(UNAME_P) && defined(UNAME_R) && defined(UNAME_S)
+#   if defined(UNAME_P) && defined(UNAME_R) && defined(UNAME_S)
       " ("UNAME_S" "UNAME_R" "UNAME_P")",
-#   else
-#    ifdef sparc
-#     ifdef __SVR4
+#    else
+#     if defined(__x86_64__) || defined(__amd64__)
+#      ifdef __illumos__
+      " (illumos/AMD64)",
+#      else
+      " (Oracle Solaris/x86-64)",
+#      endif
+#    else
+#     ifdef sparc
+#      ifdef __SVR4
+#       ifdef __illumos__
+      " (illumos/SPARC)",
+#       else
       " (Sun SPARC/Solaris)",
-#     else /* may or may not be SunOS */
+#       endif
+#      else /* may or may not be SunOS */
       " (Sun SPARC)",
+#      endif
+#    else
+#    ifdef i386
+#     ifdef __SVR4
+#      ifdef __illumos__
+      " (illumos/x86)",
+#      else
+      " (Sun Solaris/Intel)",
+#      endif
+#     else
+#      if defined(sun386) || defined(i386)
+      " (Sun 386i)",
 #     endif
 #    else
-#     if defined(sun386) || defined(i386)
-      " (Sun 386i)",
-#     else
-#      if defined(mc68020) || defined(__mc68020__)
+#       if defined(mc68020) || defined(__mc68020__)
       " (Sun 3)",
-#      else /* mc68010 or mc68000:  Sun 2 or earlier */
+#       else /* mc68010 or mc68000:  Sun 2 or earlier */
       " (Sun 2)",
+#       endif
+#       endif
 #      endif
 #     endif
 #    endif
@@ -2015,14 +2043,25 @@ void version( __GX)
 #    if defined(UNAME_M) && defined(UNAME_R) && defined(UNAME_S)
       " ("UNAME_S" "UNAME_R" "UNAME_M")",
 #    else
+#     ifdef hppa
+      " (HP-UX/PA-RISC)",
+#     else
+#      ifdef ia64
+      " (HP-UX/Itanium)",
+#      else
       " (HP-UX)",
+#     endif
 #    endif
 #   else
 #    ifdef __osf__
 #     if defined( SIZER_V)
-      " (Tru64 "SIZER_V")"
+      " (Compaq Tru64 "SIZER_V")"
 #     else /* defined( SIZER_V) */
-      " (Tru64)",
+#      if defined(mips) || defined(hppa)
+      " (OSF/1)",
+#      else
+      " (Compaq Tru64)",
+#      endif
 #     endif /* defined( SIZER_V) [else] */
 #    else
 #     ifdef _AIX
@@ -2059,167 +2098,195 @@ void version( __GX)
 #          if defined(uts) || defined(UTS)
       " (Amdahl UTS)",
 #          else
-#           ifdef NeXT
-#            ifdef mc68000
+#           ifdef __ANDROID__
+      " (Android)",
+#           else
+#            ifdef NeXT
+#             ifdef mc68000
       " (NeXTStep/black)",
-#            else
-      " (NeXTStep for Intel)",
-#            endif
-#           else   /* the next dozen or so are somewhat order-dependent */
-#            ifdef LINUX
-#             if defined( UNAME_M) && defined( UNAME_O)
-      " ("UNAME_O" "UNAME_M")",
 #             else
-#              ifdef __ELF__
-      " (Linux ELF)",
-#              else
-      " (Linux a.out)",
-#              endif
+#             ifdef i386
+      " (NeXTStep/white)",
+#             else
+#             ifdef sparc
+      " (NeXTStep/SPARC)",
+#             else
+#             ifdef hppa
+      " (NeXTStep/PA-RISC)",
+#             else
+#             ifdef ppc
+      " (Apple Rhapsody/PowerPC)",
 #             endif
-#            else
-#             ifdef MINIX
-      " (Minix)",
-#             else
-#              ifdef M_UNIX
-      " (SCO Unix)",
+#            else   /* the next dozen or so are somewhat order-dependent */
+#             ifdef LINUX
+#              if defined( UNAME_M) && defined( UNAME_O)
+      " ("UNAME_O" "UNAME_M")",
 #              else
-#               ifdef M_XENIX
-      " (SCO Xenix)",
+#               ifdef __ELF__
+      " (Linux ELF)",
 #               else
-#                ifdef __NetBSD__
-#                 ifdef NetBSD0_8
-      (sprintf( os_namebuf, " (NetBSD 0.8%c)",
-                (char)(NetBSD0_8 - 1 + 'A')),
-       os_namebuf),
-#                 else
-#                  ifdef NetBSD0_9
-      (sprintf( os_namebuf, " (NetBSD 0.9%c)",
-                (char)(NetBSD0_9 - 1 + 'A')),
-       os_namebuf),
-#                  else
-#                   ifdef NetBSD1_0
-      (sprintf(os_namebuf, " (NetBSD 1.0%c)",
-               (char)(NetBSD1_0 - 1 + 'A')),
-       os_namebuf),
-#                   else
-      (BSD4_4 == 0.5)? " (NetBSD before 0.9)" :
-                       " (NetBSD 1.1 or later)",
-#                   endif
-#                  endif
-#                 endif
+      " (Linux a.out)",
+#               endif
+#              endif
+#             else
+#              ifdef MINIX
+      " (MINIX)",
+#              else
+#               ifdef M_UNIX
+      " (SCO UNIX)",
+#               else
+#                ifdef M_XENIX
+      " (Xenix)",
 #                else
-#                 ifdef __FreeBSD__
-      (BSD4_4 == 0.5)? " (FreeBSD 1.x)" :
-                       " (FreeBSD 2.0 or later)",
+#                 ifdef __OpenBSD__
+      " (OpenBSD)",
 #                 else
-#                  ifdef __bsdi__
-      (BSD4_4 == 0.5)? " (BSD/386 1.0)" :
-                       " (BSD/386 1.1 or later)",
+#                  ifdef __DragonFly__
+      " (DragonFly BSD)",
 #                  else
-#                   ifdef __386BSD__
-      (BSD4_4 == 1)? " (386BSD, post-4.4 release)" :
-                     " (386BSD)",
+#                   ifdef __NetBSD__
+      " (NetBSD)", /* Prune these now-useless BSD version checkers */
 #                   else
-#                    ifdef __CYGWIN__
-      " (Cygwin)",
+#                    ifdef __FreeBSD__
+      " (FreeBSD)",
 #                    else
-#                     if defined(i686) || defined(__i686) || defined(__i686__)
-      " (Intel 686)",
+#                     ifdef __bsdi__
+      " (BSD/OS)",
 #                     else
-#                      if defined(i586) || defined(__i586) || defined(__i586__)
-      " (Intel 586)",
+#                      ifdef __386BSD__
+      " (386BSD)",
 #                      else
-#                       if defined(i486) || defined(__i486) || defined(__i486__)
-      " (Intel 486)",
+#                       ifdef __CYGWIN__
+      " (Cygwin)",
 #                       else
-#                        if defined(i386) || defined(__i386) || defined(__i386__)
-      " (Intel 386)",
+#                        if defined(i686) || defined(__i686) || defined(__i686__)
+      " (Intel 686)",
 #                        else
-#                         ifdef pyr
-      " (Pyramid)",
+#                         if defined(i586) || defined(__i586) || defined(__i586__)
+      " (Intel 586)",
 #                         else
-#                          ifdef ultrix
-#                           ifdef mips
-      " (DEC/MIPS)",
-#                           else
-#                            ifdef vax
-      " (DEC/VAX)",
-#                            else /* __alpha? */
-      " (DEC/Alpha)",
-#                            endif
-#                           endif
+#                          if defined(i486) || defined(__i486) || defined(__i486__)
+      " (Intel 486)",
 #                          else
-#                           ifdef gould
-      " (Gould)",
+#                           if defined(i386) || defined(__i386) || defined(__i386__)
+      " (Intel 386)",
 #                           else
-#                            ifdef MTS
-      " (MTS)",
+#                            if defined(__riscv)
+      " (RISC-V)",
 #                            else
-#                             ifdef __convexc__
-      " (Convex)",
+#                             if defined(__loongarch__)
+      " (LoongArch)",
 #                             else
-#                              ifdef __QNX__
-      " (QNX 4)",
+#                              ifdef pyr
+      " (Pyramid)",
 #                              else
-#                               ifdef __QNXNTO__
-      " (QNX Neutrino)",
-#                               else
-#                                ifdef Lynx
-      " (LynxOS)",
+#                               ifdef ultrix
+#                                ifdef mips
+      " (ULTRIX/DECstation)",
 #                                else
-#                                 ifdef __APPLE__
-#                                  if defined(UNAME_P) && defined(UNAME_R) && defined(UNAME_S)
-      " ("UNAME_S" "UNAME_R" "UNAME_P")",
-#                                  else
-#                                   ifdef __i386__
-      " (Mac OS X Intel i32)",
-#                                   else
-#                                    ifdef __ppc__
-      " (Mac OS X PowerPC)",
-#                                    else
-#                                     ifdef __ppc64__
-      " (Mac OS X PowerPC64)",
-#                                     else
-      " (Mac OS X)",
-#                                     endif /* __ppc64__ */
-#                                    endif /* __ppc__ */
-#                                   endif /* __i386__ */
-#                                  endif
+#                                 ifdef vax
+      " (Digital ULTRIX/VAX)",
+/*
+                               else __alpha?
+                                     ...alas
+								    
+      " (ULTRIX/Alpha)",            
+*/
+#                                 endif
+#                               endif
+#                               else
+#                                ifdef gould
+      " (Gould)",
+#                                else
+#                                 ifdef __INTEGRITY
+      " (INTEGRITY)",
 #                                 else
+#                                  ifdef MTS
+      " (MTS)",
+#                                  else
+#                                   ifdef __convexc__
+      " (Convex)",
+#                                   else
+#                                    ifdef __QNX__
+      " (QNX 4)",
+#                                    else
+#                                     ifdef __QNXNTO__
+      " (QNX Neutrino)",
+#                                     else
+#                                      ifdef Lynx
+      " (LynxOS)",
+#                                      else
+#                                       ifdef __HAIKU__
+      " (Haiku)",                   
+#                                       else
+#                                        ifdef __APPLE__
+#                                         if defined(UNAME_P) && defined(UNAME_R) && defined(UNAME_S)
+      " ("UNAME_S" "UNAME_R" "UNAME_P")",
+#                                         else
+#                                          ifdef __i386__
+      " (Mac OS X Intel)",
+#                                          else
+#                                           ifdef __ppc__
+      " (Mac OS X PowerPC)",
+#                                           else
+#                                            ifdef __ppc64__
+      " (Mac OS X PowerPC, 64-bit)",
+#                                            else
+#                                             ifdef __x86_64__
+      " (macOS x86_64)",
+#                                             else
+#                                              ifdef __aarch64__
+      " (macOS Apple Silicon)",
+#                                              else
+      " (One Strange Apple)",
+#                                              endif /* __aarch64__ */
+#                                             endif /* __x86_64__ */
+#                                            endif /* __ppc64__ */
+#                                           endif /* __ppc__ */
+#                                          endif /* __i386__ */
+#                                         endif
+#                                        else
       "",
-#                                 endif /* Apple */
-#                                endif /* Lynx */
-#                               endif /* QNX Neutrino */
-#                              endif /* QNX 4 */
-#                             endif /* Convex */
-#                            endif /* MTS */
-#                           endif /* Gould */
-#                          endif /* DEC */
-#                         endif /* Pyramid */
-#                        endif /* 386 */
-#                       endif /* 486 */
-#                      endif /* 586 */
-#                     endif /* 686 */
-#                    endif /* Cygwin */
-#                   endif /* 386BSD */
-#                  endif /* BSDI BSD/386 */
+#                                      endif /* Apple */
+#                                     endif /* Haiku */
+#                                    endif /* Lynx */
+#                                   endif /* QNX Neutrino */
+#                                  endif /* QNX 4 */
+#                                 endif /* Convex */
+#                                endif /* MTS */
+#                               endif /* INTEGRITY */ 
+#                              endif /* Gould */
+#                             endif /* DEC */
+#                            endif /* Pyramid */
+#                           endif /* LoongArch */
+#                          endif /* RISC-V */
+#                         endif /* 386 */
+#                        endif /* 486 */
+#                       endif /* 586 */
+#                      endif /* 686 */
+#                     endif /* Cygwin */
+#                    endif /* 386BSD */
+#                   endif /* BSDI BSD/386 */
+#                  endif /* FreeBSD */
 #                 endif /* NetBSD */
-#                endif /* FreeBSD */
-#               endif /* SCO Xenix */
-#              endif /* SCO Unix */
-#             endif /* Minix */
-#            endif /* Linux */
-#           endif /* NeXT */
-#          endif /* Amdahl */
-#         endif /* Cray */
-#        endif /* z/VM */
-#       endif /* z/OS */
-#      endif /* RT/AIX */
-#     endif /* AIX */
-#    endif /* OSF/1 */
-#   endif /* HP-UX */
-#  endif /* Sun */
-# endif /* SGI */
+#                endif /* DragonFly */
+#               endif /* OpenBSD */
+#              endif /* SCO Xenix */
+#             endif /* SCO Unix */
+#            endif /* Minix */
+#           endif /* Linux */
+#          endif /* Android */
+#         endif /* NeXT */
+#        endif /* Amdahl */
+#       endif /* Cray */
+#      endif /* z/VM */
+#     endif /* z/OS */
+#    endif /* RT/AIX */
+#   endif /* AIX */
+#  endif /* OSF/1 */
+# endif /* HP-UX */
+#endif /* Sun */
+#endif /* SGI */
 
 # if defined( __DATE__) && !defined( NO_BUILD_DATE)
       " on ", __DATE__

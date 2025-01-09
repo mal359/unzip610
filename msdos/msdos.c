@@ -1846,7 +1846,7 @@ void version(__G)
     __GDEF
 {
     int len;
-#if defined(__DJGPP__) || defined(__WATCOMC__) || \
+#if #if defined(__DJGPP__) || defined(__WATCOMC__) || defined(__ZTC__) \
     (defined(_MSC_VER) && (_MSC_VER != 800))
     char buf[80];
 #endif
@@ -1855,22 +1855,32 @@ void version(__G)
 
 #if defined(__GNUC__)
 #  if defined(__DJGPP__)
-      (sprintf(buf, "djgpp v%d.%02d / gcc ", __DJGPP__, __DJGPP_MINOR__), buf),
+      (sprintf(buf, "DJGPP v%d.%02d / GCC ", __DJGPP__, __DJGPP_MINOR__), buf),
 #  elif defined(__GO32__)         /* __GO32__ is defined as "1" only (sigh) */
-      "djgpp v1.x / gcc ",
+      "DJGPP v1.x / GCC ",
 #  elif defined(__EMX__)          /* ...so is __EMX__ (double sigh) */
-      "emx+gcc ",
+      "emx/gcc ",
 #  else
-      "gcc ",
+      "GNU C ",
 #  endif
       __VERSION__,
+#elif defined(__HIGHC__)
+      "Metaware High C ", /* no way to get version, ref: Watt-32 */
+#elif defined(__PACIFIC__)
+      "HI-TECH Pacific C ",
+#elif defined(AZTEC_C)
+      "Manx Aztec C ",
+#elif defined(LATTICE)
+      "Lattice C ",
+#elif defined(__ORANGEC__)
+      "Orange C ", __VERSION__,
 #elif defined(__WATCOMC__)
-#  if (__WATCOMC__ % 10 != 0)
-      "Watcom C/C++", (sprintf(buf, " %d.%02d", __WATCOMC__ / 100,
-                               __WATCOMC__ % 100), buf),
+#  if(__WATCOMC__ >= 1200)
+      "Open Watcom C", (sprintf(buf, " %d.%d", (__WATCOMC__/100)-11,
+		(__WATCOMC__%100)/10), buf),
 #  else
-      "Watcom C/C++", (sprintf(buf, " %d.%d", __WATCOMC__ / 100,
-                               (__WATCOMC__ % 100) / 10), buf),
+      "Watcom C", (sprintf(buf, " %d.%d", __WATCOMC__/100, __WATCOMC__%100),
+		buf),
 #  endif
 #elif defined(__TURBOC__)
 #  ifdef __BORLANDC__
@@ -1889,8 +1899,10 @@ void version(__G)
         " 4.5",
 #    elif (__BORLANDC__ == 0x0500)
         " 5.0",
+#    elif (__BORLANDC__ == 0x0520)
+        " 5.2",
 #    else
-        " later than 5.0",
+        " later than 5.2 (for DOS? likely story...)",
 #    endif
 #  else
       "Turbo C",
@@ -1931,29 +1943,39 @@ void version(__G)
       "5.1 or earlier",
 #    endif
 #  endif
+#elif defined(__ZTC__)
+#  if defined(__SC__)
+      "Symantec C++", (sprintf(buf, " %d.%d", __SC__ >> 8, __SC__ & 0xFF), buf),
+#  else
+      "Zortech C++", (sprintf(buf, " %d.%dr%d", __ZTC__ >> 8,
+        (__ZTC__ >> 4) & 0xf, __ZTC__ & 0xf), buf),
+#  endif
+#elif defined(__POWERC)
+      "MIX Power C", (sprintf(buf, "%d.%d.%d",
+            __POWERC/100, (__POWERC / 10) % 10, __POWERC % 10), buf),
 #else
       "unknown compiler", "",
 #endif /* ?compilers */
 
-      "\nMS-DOS",
+      "\nDOS",
 
 #if (defined(__GNUC__) || defined(WATCOMC_386))
-      " (32-bit)",
+      " (Protected Mode)",
 #else
 #  if defined(M_I86HM) || defined(__HUGE__)
-      " (16-bit, huge)",
+      " (Real Mode, huge)",
 #  elif defined(M_I86LM) || defined(__LARGE__)
-      " (16-bit, large)",
+      " (Real Mode, large)",
 #  elif defined(M_I86MM) || defined(__MEDIUM__)
-      " (16-bit, medium)",
+      " (Real Mode, medium)",
 #  elif defined(M_I86CM) || defined(__COMPACT__)
-      " (16-bit, compact)",
+      " (Real Mode, compact)",
 #  elif defined(M_I86SM) || defined(__SMALL__)
-      " (16-bit, small)",
+      " (Real Mode, small)",
 #  elif defined(M_I86TM) || defined(__TINY__)
-      " (16-bit, tiny)",
+      " (Real Mode, tiny)",
 #  else
-      " (16-bit)",
+      " (Real Mode)",
 #  endif
 #endif
 
