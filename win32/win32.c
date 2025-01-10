@@ -4214,7 +4214,7 @@ void version(__G)
     int len;
 #if (defined(_MSC_VER) || defined(__WATCOMC__) || defined(__DJGPP__) \
     || defined(__SC__) || defined(__ICC) || defined(__PGIC__) \
-    || defined (__POCC__) || defined (__ghs__)) || defined (__BORLANDC__)
+    || defined (__POCC__) || defined (__ghs__) || defined (__BORLANDC__))
     char buf[80];
 #    if (defined(_MSC_VER) && (_MSC_VER > 900))
     char buf2[80];
@@ -4233,7 +4233,7 @@ void version(__G)
       "(Visual C++ v2.x)",
 #    elif (900 < _MSC_VER && _MSC_VER <= 1800)
       (sprintf(buf2, "(Visual C++ v%d.%d)", _MSC_VER/100 - 6, _MSC_VER%100/10),
-        buf2),
+       buf2),
 #    elif (_MSC_VER == 1900)
       "(Visual C++ v14.0)",
 #    elif (_MSC_VER == 1910)
@@ -4242,10 +4242,10 @@ void version(__G)
       "(Visual C++ v15.3)",
 #    elif (1912 <= _MSC_VER && _MSC_VER < 1920)
       (sprintf(buf2, "(Visual C++ v%d.%d)", _MSC_VER/100 - 4,
-        _MSC_VER%100 - 7), buf2),
+       _MSC_VER%100 - 7), buf2),
 #    elif (1920 <= _MSC_VER && _MSC_VER < 1927)
       (sprintf(buf2, "(Visual C++ v%d.%d)", _MSC_VER/100 - 3,
-        _MSC_VER%100 - 20), buf2),
+       _MSC_VER%100 - 20), buf2),
 #    elif (192829333 <= _MSC_FULL_VER && _MSC_FULL_VER < 192829910)
       "(Visual C++ v16.8)",
 #    elif (192829910 <= _MSC_FULL_VER && _MSC_FULL_VER < 192929917)
@@ -4256,110 +4256,120 @@ void version(__G)
       "(Visual C++ v16.11)",
 #    elif (_MSC_VER >= 1930)
       (sprintf(buf2, "(Visual C++ v%d.%d)", _MSC_VER/100 - 2,
-        _MSC_VER%100 - 30), buf2),
+       _MSC_VER%100 - 30), buf2),
 #    else
       "(bad version)",
 #    endif
 #   elif defined(__WATCOMC__)
-#  if(__WATCOMC__ >= 1200)
+#    if(__WATCOMC__ >= 1200)
       "Open Watcom C", (sprintf(buf, " %d.%d", (__WATCOMC__/100)-11,
-        (__WATCOMC__%100)/10), buf),
+       (__WATCOMC__%100)/10), buf),
 #    else
       "Watcom C", (sprintf(buf, " %d.%d", __WATCOMC__/100, __WATCOMC__%100),
-        buf),
+       buf),
 #    endif
-#elif defined(__BORLANDC__)
-#  if (__BORLANDC__ < 0x0200)
+#  elif defined(__BORLANDC__)
+#   if (__BORLANDC__ < 0x0200)
       " Borland C++ 1.0",
-#  elif (__BORLANDC__ == 0x0200)
+#   elif (__BORLANDC__ == 0x0200)
       " Borland C++ 2.0",
-#  elif (0x0400 <= __BORLANDC__ && __BORLANDC__ <= 0x0450
-      sprintf(buf, "Borland C++ %X.%X", (__BORLANDC__/0x100)-1,
-       (__BORLANDC__%0x100)/0x10, buf),
-#  elif (__BORLANDC__ == 0x0450)   /* __TURBOC__ = 0x0320 */
-      " Borland C++ 4.0",
-#  elif (__BORLANDC__ == 0x0452)   /* __TURBOC__ = 0x0320 */
-      " Borland C++ 4.02",
-#  elif (__BORLANDC__ == 0x0460)   /* __TURBOC__ = 0x0340 */
+#   elif (__BORLANDC__ == 0x0400)
+      " Borland C++ 3.0",
+#   elif (__BORLANDC__ == 0x0410)   /* __TURBOC__ = 0x0310 */
+      " Borland C++ 3.1",
+#   elif (__BORLANDC__ == 0x0452)   /* __TURBOC__ = 0x0320 */
+      " Borland C++ 4.0 or 4.02",
+#   elif (__BORLANDC__ == 0x0460)   /* __TURBOC__ = 0x0340 */
       " Borland C++ 4.5",
-#  elif ((0x0500 <= __BORLANDC__ && __BORLANDC__ < 0x0590)
-         && __BORLANDC__ != 0x0551 && __BORLANDC__ != 0x0562)
-	  sprintf(buf, "Borland C++ %X.%X", __BORLANDC__/0x100,
-	  (__BORLANDC__%0x100)/0x10, buf),
-#  elif (__BORLANDC__ == 0x0551)    /* __TURBOC__ = 0x0551 */
+#   elif (__BORLANDC__ == 0x0450)   /* __TURBOC__ = 0x0320 */
+      " Borland C++ 4.0",
+#   elif (__BORLANDC__ == 0x0452)   /* __TURBOC__ = 0x0320 */
+      " Borland C++ 4.02",
+#   elif (__BORLANDC__ == 0x0460)   /* __TURBOC__ = 0x0340 */
+      " Borland C++ 4.5",
+#   elif ((0x0500 <= __BORLANDC__ && __BORLANDC__ < 0x0562) \
+         && __BORLANDC__ != 0x0551)
+	  sprintf(buf, "Borland C++ %X.%X", __BORLANDC__ >> 8,
+	   (__BORLANDC__ & 0xFF) / 0x10), buf),
+#   elif (__BORLANDC__ == 0x0551)    /* __TURBOC__ = 0x0551 */
       "Borland C++ 5.5.1",
-#  elif (__BORLANDC__ == 0x0562)    /* __TURBOC__ = 0x0562 */
+#   elif (__BORLANDC__ == 0x0562)    /* __TURBOC__ = 0x0562 */
       "Borland C++ 5.6.4",
-#  elif (0x0562 < __BORLANDC__ && __BORLANDC__ < 0x0590)
-      sprintf(buf, "Borland C++ %X.%02X", __BORLANDC__/0x100,
-       __BORLANDC__%0x100, buf),
-#  elif (0x0590 <= __BORLANDC__ && __BORLANDC__ < 0x0620)
-      sprintf(buf, "CodeGear C++ %X.%02X", __BORLANDC__/0x100, 
-        __BORLANDC__%0x100, buf),
-#  elif (0x0620 <= __BORLANDC__)
-      sprintf(buf, "Embarcadero C++ %X.%02X", __BORLANDC__/0x100,
-        __BORLANDC__%0x100, buf),
-#  else
-	  " (Silly hacked copy)",
-#  endif
-#elif defined(__POCC__) /* Does Pelles C define __LCC__? Who knows. */
-      (sprintf(buf, "PellesC %d.%d", __POCC__/100, __POCC__%100), buf);
-#   elif defined(__LCC__)
-      "LCC-Win", "",
-#if defined(__PGIC__)
+#   elif (0x0562 < __BORLANDC__ && __BORLANDC__ < 0x0590)
+      sprintf(buf, "Borland C++ %X.%02X", __BORLANDC__ >> 8,
+       __BORLANDC__ & 0xFF, buf),
+#   elif (0x0590 <= __BORLANDC__ && __BORLANDC__ < 0x0620)
+      sprintf(buf, "CodeGear C++ %X.%02X", __BORLANDC__ >> 8, 
+       __BORLANDC__ & 0xFF, buf),
+#   elif (0x0620 <= __BORLANDC__)
+      sprintf(buf, "Embarcadero C++ %X.%02X", __BORLANDC__ >> 8,
+       __BORLANDC__ & 0xFF, buf),
+#   else
+	  " (I think)",
+#   endif
+#  elif defined(__POCC__) /* Does Pelles C define __LCC__? Who knows. */
+      (sprintf(buf, "Pelles C %d.%d", __POCC__/100, __POCC__%100), buf),
+#  elif defined(__LCC__)
+      "LCC-Win32", "",
+#  elif defined(__PGIC__)
 	  (sprintf(buf, "Portland Group C %d.%d.%d", __PGIC__, __PGIC_MINOR__, 
-        __PGIC_PATCHLEVEL__), buf)
-#elif defined(__GNUC__)
-# if defined(__clang__)
-#  if defined(__CODEGEARC__)
-      "Embarcadero C++ (Clang-ehnanced), ", __clang_patchlevel__,
-#  elif defined(__INTEL_LLVM_COMPILER)
-      "Intel LLVM Compiler, ", __clang_patchlevel__, 
-#  else
-      "Clang/LLVM ", __VERSION__,
-# endif
-#    if defined(__RSXNT__)
-#     if (defined(__DJGPP__) && !defined(__EMX__))
-      (sprintf(buf, "RSXNT (DJGPP v%d.%02d) / GCC ",
-        __DJGPP__, __DJGPP_MINOR__), buf),
-#     elif defined(__DJGPP__)
-      (sprintf(buf, "RSXNT (emx+DJGPP v%d.%02d) / GCC ",
-        __DJGPP__, __DJGPP_MINOR__), buf),
-#     elif (defined(__GO32__) && !defined(__EMX__))
-      "RSXNT (DJGPP v1.x / GCC) ",
-#     elif defined(__GO32__)
-      "RSXNT (emx + DJGPP v1.x / GCC) ",
-#     elif defined(__EMX__)
-      "RSXNT (emx/gcc) ",
-#     else
-      "RSXNT (unknown) / GCC ",
-#     endif
-#    elif defined(__CYGWIN__)
-      "Cygwin GCC ",
-#    elif defined(__MINGW64__)
-      "MinGW-64 GCC ",
-#    elif defined(__MINGW32__)
-      "mingw32 GCC ",
+       __PGIC_PATCHLEVEL__), buf),
+#  elif defined(__GNUC__)
+#   if defined(__INTEL_COMPILER) /* Truly noxious */
+#    if (__INTEL_COMPILER < 2021)
+      (sprintf(buf, "Intel C++ %d.%d", __INTEL_COMPILER / 100,
+       (__INTEL_COMPILER % 100) / 10), buf),
 #    else
-      "GNU C ",
+      (sprintf(buf, "Intel C++ Compiler Classic %d.%d",
+       __INTEL_COMPILER / 100, (__INTEL_COMPILER % 1000) / 100), buf),
 #    endif
-      __VERSION__,
-#elif defined(__SC__)
-#  if defined(__DMC__)
-      (sprintf(buf, "Digital Mars C %d.%d", __DMC__ >> 8, __DMC__ & 0xFF, buf);
-#  else
-      (sprintf(buf, "Symantec C++ %d.%d", (__SC__ >> 8), (__SC__ & 0xFF), buf),
-#  endif
-#elif defined(__IBMC__)
-      (sprintf(buf, "IBM Visual Age C++ %d.%02d", __IBMC__/100,__IBMC__%100), buf),
-#elif defined(__HIGHC__)
-      "Metaware High C ", /* no way to get version, ref: Watt-32 */
-#elif defined(__INTEL_COMPILER)
-      (sprintf(buf, "Intel C %d.%d", __INTEL_COMPILER/100, 
-        __INTEL_COMPILER % 100), buf),
-#elif defined(__ghs__)
+#   elif defined(__clang__)
+#    if defined(__CODEGEARC__)
+      "Embarcadero C++ (Clang-ehnanced) ", __VERSION__,
+#    elif defined(__INTEL_LLVM_COMPILER)
+      "Intel LLVM Compiler ", __VERSION__,
+#    else
+      "Clang/LLVM ", __VERSION__,
+#    endif
+#   elif defined(__RSXNT__)
+#    if (defined(__DJGPP__) && !defined(__EMX__))
+      (sprintf(buf, "RSXNT (djgpp v%d.%02d) / gcc ", __VERSION__,
+       __DJGPP__, __DJGPP_MINOR__), buf),
+#    elif defined(__DJGPP__)
+      (sprintf(buf, "RSXNT (emx+djgpp v%d.%02d) / gcc ", __VERSION__,
+       __DJGPP__, __DJGPP_MINOR__), buf),
+#    elif (defined(__GO32__) && !defined(__EMX__))
+      "RSXNT (djgpp v1.x / gcc) ", __VERSION__,
+#    elif defined(__GO32__)
+      "RSXNT (emx + djgpp v1.x / gcc) ", __VERSION__,
+#    elif defined(__EMX__)
+      "RSXNT (emx/gcc) ", __VERSION__,
+#    else
+      "RSXNT (unknown) / gcc ", __VERSION__,
+#    endif
+#   elif defined(__CYGWIN__)
+      "Cygwin / gcc ", __VERSION__,
+#   elif defined(__MINGW32__)
+#    if defined(__MINGW64__)
+      "MinGW-64 / gcc ", __VERSION__,
+#    else
+      "mingw32 / gcc ", __VERSION__,
+#    endif
+      "gcc ", __VERSION__,
+#   endif
+#  elif defined(__SC__)
+#   if defined(__DMC__)
+      (sprintf(buf, "Digital Mars C %X.%X", __DMC__ >> 8, __DMC__ & 0xFF, buf),
+#   else
+      (sprintf(buf, "Symantec C++ %X.%X", __SC__ >> 8, __SC__ & 0xFF, buf),
+#   endif
+#  elif defined(__IBMC__)
+      (sprintf(buf, "IBM VisualAge C++ %d.%02d", __IBMC__/100,__IBMC__%100), buf),
+#  elif defined(__HIGHC__) /* no way to get version, ref: Watt-32 */
+      "Metaware High C ", 
+#  elif defined(__ghs__)
       (sprintf(buf, "Green Hills C %d.%d.%d", __GHS_VERSION_NUMBER__ / 100, 
-        (__GHS_VERSION_NUMBER__ / 10) % 10, __GHS_VERSION_NUMBER__ % 10), buf),
+       (__GHS_VERSION_NUMBER__ / 10) % 10, __GHS_VERSION_NUMBER__ % 10), buf),
 #elif defined(__ORANGEC__)
       "Orange C ", __VERSION__,
 #   else /* !_MSC_VER, !__WATCOMC__, !__BORLANDC__, !__LCC__, !__GNUC__ */

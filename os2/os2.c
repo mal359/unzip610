@@ -2201,7 +2201,7 @@ void version(__G)
 #  elif (__IBMC__ < 300)
       (sprintf(buf, "C Set++ %d.%02d", __IBMC__/100,__IBMC__%100), buf),
 #  else
-      (sprintf(buf, "Visual Age C++ %d.%02d", __IBMC__/100,__IBMC__%100), buf),
+      (sprintf(buf, "VisualAge C++ %d.%02d", __IBMC__/100,__IBMC__%100), buf),
 #  endif
 #  if (__WATCOMC__ >= 1200)
 	  "Open Watcom C", (sprintf(buf, " %d.%d", (__WATCOMC__ / 100) - 11, 

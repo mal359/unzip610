@@ -1855,9 +1855,9 @@ void version(__G)
 
 #if defined(__GNUC__)
 #  if defined(__DJGPP__)
-      (sprintf(buf, "DJGPP v%d.%02d / GCC ", __DJGPP__, __DJGPP_MINOR__), buf),
+      (sprintf(buf, "djgpp v%d.%02d / gcc ", __DJGPP__, __DJGPP_MINOR__), buf),
 #  elif defined(__GO32__)         /* __GO32__ is defined as "1" only (sigh) */
-      "DJGPP v1.x / GCC ",
+      "djgpp v1.x / gcc ",
 #  elif defined(__EMX__)          /* ...so is __EMX__ (double sigh) */
       "emx/gcc ",
 #  else
@@ -1865,7 +1865,7 @@ void version(__G)
 #  endif
       __VERSION__,
 #elif defined(__HIGHC__)
-      "Metaware High C ", /* no way to get version, ref: Watt-32 */
+      "Metaware High C ",
 #elif defined(__PACIFIC__)
       "HI-TECH Pacific C ",
 #elif defined(AZTEC_C)
@@ -1902,7 +1902,7 @@ void version(__G)
 #    elif (__BORLANDC__ == 0x0520)
         " 5.2",
 #    else
-        " later than 5.2 (for DOS? likely story...)",
+        " (I think)",
 #    endif
 #  else
       "Turbo C",
@@ -1945,10 +1945,10 @@ void version(__G)
 #  endif
 #elif defined(__ZTC__)
 #  if defined(__SC__)
-      "Symantec C++", (sprintf(buf, " %d.%d", __SC__ >> 8, __SC__ & 0xFF), buf),
+      "Symantec C++", (sprintf(buf, " %X.%X", __SC__>>8, __SC__&0xFF), buf),
 #  else
-      "Zortech C++", (sprintf(buf, " %d.%dr%d", __ZTC__ >> 8,
-        (__ZTC__ >> 4) & 0xf, __ZTC__ & 0xf), buf),
+      "Zortech C++", (sprintf(buf, " %X.%Xr%X", __ZTC__>>8,
+        (__ZTC__>>4)&0xF, __ZTC__&0xF), buf),
 #  endif
 #elif defined(__POWERC)
       "MIX Power C", (sprintf(buf, "%d.%d.%d",
