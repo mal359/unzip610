@@ -490,7 +490,8 @@ static ZCONST char Far EnvOptFormat[] = "%16s:  %.1024s\n";
 #  endif
 static ZCONST char Far None[] = "[none]";
 #  ifdef ACORN_FTYPE_NFS
-static ZCONST char Far AcornFtypeNFS[] = "ACORN_FTYPE_NFS";
+static ZCONST char Far AcornFtypeNFS[] = 
+"ACORN_FTYPE_NFS       (Acorn filetype & NFS extension handling)";
 #  endif
 
 #  if defined( UNIX) && defined( __APPLE__)
@@ -587,7 +588,8 @@ static ZCONST char Far NTSDExtAttrib[] =
  "NTSD_EAS             (Windows NT extended attributes supported)";
 #  endif
 #  if defined(WIN32) && defined(NO_W32TIMES_IZFIX)
-static ZCONST char Far W32NoIZTimeFix[] = "NO_W32TIMES_IZFIX";
+static ZCONST char Far W32NoIZTimeFix[] = 
+"NO_W32TIMES_IZFIX     (NTFS DST timestamps)";
 #  endif
 #  ifdef OLD_THEOS_EXTRA
 static ZCONST char Far OldTheosExtra[] =
