@@ -91,7 +91,7 @@ int unreduce(__G)           /* expand probabilistically reduced data */
     shrint ExState = 0;
     shrint V = 0;
     shrint Len = 0;
-    ulg s = G.lrec.ucsize;  /* number of bytes left to decompress */
+    zusz_t s = G.lrec.ucsize;  /* number of bytes left to decompress */
     unsigned w = 0;         /* position in output window slide[] */
     unsigned u = 1;         /* true if slide[] unflushed */
     uch Slen[256];

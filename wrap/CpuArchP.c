@@ -11,6 +11,6 @@
  * Wrapper for "ppmd/CpuArchP.c". MAL 2025
  */
 
-#ifdef PPMD_SUPPORT
+#if (defined (PPMD_SUPPORT) && !defined (LZMA_SUPPORT))
 # include "../ppmd/CpuArchP.c"
 #endif

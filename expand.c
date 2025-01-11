@@ -77,7 +77,7 @@ int unreduce(__G)
 	int state = 0;
 	int len, v;
 	int cf = G.lrec.compression_method - 1;
-	ulg rest = G.lrec.ucsize;
+	zusz_t rest = G.lrec.ucsize;
 	int outpos = 0, backptr;
 	int error;
 	int i;
@@ -113,13 +113,13 @@ int unreduce(__G)
 			XREADBITS(8, lc, break)
 			Trace((stderr, "=> %d ", lc));
 		} else {
-			shrint code;
+			unsigned short int code;
 			XREADBITS(1, code, break)
 			if (code) {
 				XREADBITS(8, lc, break)
 				Trace((stderr, "1 => %d", lc));
 			} else {
-				XREADBITS(M_B((*f_n)[lc]), code, break)
+				XREADBITS((unsigned int)M_B((unsigned)(*f_n)[lc]), code, break)
 				Trace((stderr, "0 %d %d ",
 					M_B((*f_n)[lc]), code));
 				if (code >= (*f_n)[lc])
