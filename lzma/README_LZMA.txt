@@ -67,4 +67,5 @@ use it) should be addressed to the original authors.
                   directory with separate lzma/ and ppmd/ directories,
                   to cope with inconsistencies in their current header
                   files.  LZMA SDK version 18.05.  (SMS)
-
+				  
+	  2025-01-09  7-zip SDK version 24.09 (MAL)

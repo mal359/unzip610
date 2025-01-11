@@ -64,4 +64,5 @@ use it) should be addressed to the original authors.
                   directory with separate lzma/ and ppmd/ directories,
                   to cope with inconsistencies in their current header
                   files.  p7zip version 16.02.  (SMS)
-
+	  
+	  2025-01-09  7-zip SDK version 24.09 (MAL)

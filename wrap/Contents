@@ -5,6 +5,8 @@ aescrypt.c          Wrapper for "aes_wg/aescrypt.c"
 aeskey.c            Wrapper for "aes_wg/aeskey.c"
 aestab.c            Wrapper for "aes_wg/aestab.c"
 Contents            This file
+CpuArch.c           Wrapper for "lzma/CpuArch.c"
+CpuArchP.c          Wrapper for "ppmd/CpuArchP.c"
 crc_i386.c          Wrapper for "win32/crc_i386.c"
 fileenc.c           Wrapper for "aes_wg/fileenc.c"
 hmac.c              Wrapper for "aes_wg/hmac.c"
