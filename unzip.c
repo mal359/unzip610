@@ -420,10 +420,10 @@ files in list (excluding those in xlist) from the specified .zip archive(s).\n\
 \"file[.zip]\" may be a wildcard name containing %s.\n";
 
 static ZCONST char Far ZipInfoUsageLine3[] = "\n\
-Options (main listing format)            -s  short Unix \"ls -l\" format (def.)\
+Options (main listing format)            -s  short UNIX \"ls -l\" format (def.)\
 \n\
-  -1  filenames ONLY, one per line       -m  medium Unix \"ls -l\" format\n\
-  -2  like -1, but allowing -h/-t/-z     -l  long Unix \"ls -l\" format\n\
+  -1  filenames ONLY, one per line       -m  medium UNIX \"ls -l\" format\n\
+  -2  like -1, but allowing -h/-t/-z     -l  long UNIX \"ls -l\" format\n\
                                          -v  verbose, multi-page format\n";
 
 static ZCONST char Far ZipInfoUsageLine4[] = "\
@@ -491,7 +491,7 @@ static ZCONST char Far EnvOptFormat[] = "%16s:  %.1024s\n";
 static ZCONST char Far None[] = "[none]";
 #  ifdef ACORN_FTYPE_NFS
 static ZCONST char Far AcornFtypeNFS[] = 
-"ACORN_FTYPE_NFS       (Acorn filetype & NFS extension handling)";
+"ACORN_FTYPE_NFS       (Acorn filetype & NFS extension handling supported)";
 #  endif
 
 #  if defined( UNIX) && defined( __APPLE__)
@@ -600,7 +600,8 @@ static ZCONST char Far OS2ExtAttrib[] =
  "OS2_EAS              (OS/2 extended attributes supported)";
 #  endif
 #  ifdef QLZIP
-static ZCONST char Far SMSExFldOnUnix[] = "QLZIP";
+static ZCONST char Far SMSExFldOnUnix[] = 
+ "QLZIP                (QDOS extra fields supported)";
 #  endif
 #  ifdef REENTRANT
 static ZCONST char Far Reentrant[] =
@@ -1021,17 +1022,17 @@ static ZCONST struct option_struct far options_unzip[] =
        'j',  "junk directories, extract names only"},
 # ifdef J_FLAG
     {"J",  "junk-attrs",      o_NO_VALUE,       o_NEGATABLE,
-       'J',  "Junk AtheOS, BeOS, or MacOS file attrs"},
+       'J',  "Junk AtheOS, BeOS, Haiku, or Macintosh file attrs"},
 # endif
 # if defined( UNIX) && defined( __APPLE__)
     {"Je", "junk-extattrs",   o_NO_VALUE,       o_NEGATABLE,
-       o_Je, "Junk Mac OS X extended attributes"},
+       o_Je, "Junk macOS extended attributes"},
     {"Jf", "junk-finder",     o_NO_VALUE,       o_NEGATABLE,
-       o_Jf, "Junk Mac OS X Finder info"},
+       o_Jf, "Junk macOS Finder info"},
     {"Jq", "junk-qtn",        o_NO_VALUE,       o_NEGATABLE,
-       o_Jq, "Junk Mac OS X quarantine"},
+       o_Jq, "Junk macOS quarantine"},
     {"Jr", "junk-rsrc",       o_NO_VALUE,       o_NEGATABLE,
-       o_Jr, "Junk Mac OS X resource fork"},
+       o_Jr, "Junk macOS resource fork"},
 # endif /* defined( UNIX) && defined( __APPLE__) */
     {"",   "jar",             o_NO_VALUE,       o_NEGATABLE,
        o_ja, "Treat archive(s) as Java JAR (UTF-8)"},
@@ -1824,7 +1825,8 @@ int unzip( __GX__ OFT( int) argc, OFT( char **) argv)
 
 # ifdef KFLAG
     /* Get Unix umask value.  (Already have VMS default protection value.) */
-#  if defined( __ATHEOS__) || defined( __BEOS__) || defined( UNIX)
+#  if defined(__ATHEOS__) || defined(__BEOS__) || defined(UNIX) \
+       || defined(__HAIKU__)
     umask( G.umask_val = umask( 0));
 #  endif
 # endif /* def KFLAG */
@@ -2195,7 +2197,7 @@ int uz_opts( __GX__ OFT( ZCONST struct option_struct *) opts,
             case ('e'):    /* just ignore -e, -x options (extract) */
                 break;
 # ifdef MACOS
-            case ('E'): /* -E [MacOS] display Mac e.f. when restoring */
+            case ('E'): /* -E [Macintosh] display Mac e.f. when restoring */
                 if (negative) {
                     uO.E_flag = FALSE, negative = 0;
                 } else {
@@ -2230,7 +2232,7 @@ int uz_opts( __GX__ OFT( ZCONST struct option_struct *) opts,
                 break;
 # endif /* ndef SFX */
 # ifdef MACOS
-            case ('i'): /* -i [MacOS] ignore filenames stored in Mac ef */
+            case ('i'): /* -i [Macintosh] ignore filenames stored in Mac ef */
                 if (negative) {
                     uO.i_flag = FALSE;
                 } else {
@@ -3432,8 +3434,7 @@ static void help_extended( __GX)
   "  zipinfo [options] archive[.zip] [file ...] [-x xfile ...]",
   "  unzip -Z [options] archive[.zip] [file ...] [-x xfile ...]",
   "",
-  "Below, MacOS refers to Mac OS before Mac OS X.  Mac OS X is a Unix-based",
-  "port and is referred to as MacOSX.",
+  "Below, Macintosh refers to Classic Mac OS.  macOS is referred to as macOS.",
   "",
   "UnZip 6.1 uses a new command parser which supports long options.  Short",
   "options begin with a single dash (-h), while long options start with two",
@@ -3455,7 +3456,7 @@ static void help_extended( __GX)
   "UnZip options:",
   "  -Z   Switch to ZipInfo mode.  Must be the first option.",
   "  -hh  Display extended help.",
-  "  -A   [OS/2, Unix DLL] Print extended help for DLL.",
+  "  -A   [OS/2, UNIX DLL] Print extended help for DLL.",
   "  -c   Extract files to stdout/screen.  Like -p, but include names.  Also,",
   "         -a is allowed, and ASCII-EBCDIC conversions are done if needed.",
   "  -f   Freshen by extracting only if an older file is on disk.",
@@ -3482,31 +3483,31 @@ static void help_extended( __GX)
   "  -D   Skip restoration of timestamps on all files and directories.",
   "  -D-  Restore timestamps on directories as well as on files.",
   "       DEFAULT IS NOW to restore timestamps on files, but not directories.",
-  "  -E   [MacOS (not MacOSX)]  Display contents of MacOS extra field during",
+  "  -E   [Macintosh]  Display contents of Macintosh extra field during",
   "         restore.",
   "  -F   [Acorn] Suppress removal of NFS filetype extension.  [Non-Acorn if",
   "         ACORN_FTYPE_NFS] Translate filetype and append to name.",
   "  -I   [ICONV_MAPPING] ISO code page to use.",
-  "  -i   [MacOS] Ignore filenames in MacOS extra field.  Instead, use name in",
-  "         standard header.",
+  "  -i   [Macintosh] Ignore filenames in Macintosh extra field.  Instead,", 
+  "         use name in standard header.",
   "  -J   [BeOS, Haiku] Junk file attributes.",
-  "       [MacOS] Ignore MacOS specific info.",
-  "       [MacOSX] No special AppleDouble file handling.",
-  "  -Je  [MacOSX] Ignore AppleDouble extended attributes.",
-  "  -Jf  [MacOSX] Ignore AppleDouble Finder info.",
-  "  -Jq  [MacOSX] Ignore AppleDouble quarantine (an extended attribute).",
-  "  -Jr  [MacOSX] Ignore AppleDouble resource fork.",
+  "       [Macintosh] Ignore Macintosh-specific info.",
+  "       [macOS] No special AppleDouble file handling.",
+  "  -Je  [macOS] Ignore AppleDouble extended attributes.",
+  "  -Jf  [macOS] Ignore AppleDouble Finder info.",
+  "  -Jq  [macOS] Ignore AppleDouble quarantine (an extended attribute).",
+  "  -Jr  [macOS] Ignore AppleDouble resource fork.",
   "  -j[=N] Junk paths.  Strip all (or top N) directories from extracted files.",
   "  --jar Treat archive(s) as Java JAR (UTF-8 names).",
-  "  -K   [AtheOS, BeOS, Unix] Restore SUID/SGID/Tacky file attributes.",
-  "  -k   [AtheOS, BeOS, Unix, VMS] Ignore umask (VMS: default protection)",
-  "         when restoring permissions/protections.",
+  "  -K   [AtheOS, BeOS, Haiku, UNIX] Restore SUID/SGID/Tacky file attributes.",
+  "  -k   [AtheOS, BeOS, Haiku, UNIX, VMS] Ignore umask", 
+  "         (VMS: default protection) when restoring permissions/protections.",
   "  -k-    Ignore archive permissions/protections.  Use umask (VMS: dflt prot).",
   "         Default: Apply umask (VMS: dflt prot) to archive perms/prots.",
   "  -ka  [VMS] Restore (VMS) ACL.",
   "  -L   Convert to lowercase any names from uppercase-only file system.",
   "  -LL  Convert all files to lowercase.",
-  "  -M   Pipe all output through internal pager similar to Unix more(1).",
+  "  -M   Pipe all output through internal pager similar to UNIX more(1).",
   "  -N   [Amiga] Extract file comments as Amiga filenotes.",
   "  -n   Never overwrite existing files.  Skip extracting that file, no prompt.",
   "  -O   [ICONV_MAPPING] OEM code page to use.  If -O is not used,",
@@ -3521,27 +3522,27 @@ static void help_extended( __GX)
   "  -s   Convert spaces in filenames to underscores.",
   "  -U   [UNICODE enabled] Show non-local characters as #Uxxxx or #Lxxxxxx ASCII",
   "         text escapes where x is hex digit.  [Old] -U used to leave names",
-  "         uppercase if created on MS-DOS, VMS, etc.  See -L.",
+  "         uppercase if created on DOS, VMS, etc.  See -L.",
   "  -UU  [UNICODE enabled] Disable use of stored UTF-8 paths.  Note that UTF-8",
   "         paths stored as native local paths are still processed as Unicode.",
   "  -V   Retain VMS file version numbers.",
   "  -W   [Only if WILD_STOP_AT_DIR] Modify pattern matching so ? and * do not",
   "         match directory separator /, but ** does.  Allows matching at specific",
   "         directory levels.",
-  "  -X   [Unix, VMS, OS/2, NT, Tandem] Restore UID/GID on Unix, UIC on VMS,",
+  "  -X   [UNIX, VMS, OS/2, NT, Tandem] Restore UID/GID on UNIX, UIC on VMS,",
   "         ACL on certain network-enabled versions of OS/2, or security ACL",
   "         on Windows NT.  Can require user privileges.",
   "  -XX  [NT] Extract NT security ACLs after trying to enable additional",
   "         system privileges.",
   "  -Y   [VMS] Treat archived name endings of .nnn as VMS version numbers.",
-  "  -$   [MS-DOS, OS/2, NT] Restore volume label if extraction medium is",
+  "  -$   [DOS, OS/2, NT] Restore volume label if extraction medium is",
   "         removable.  -$$ allows fixed media (hard drives) to be labeled.",
   "  -/ e [Acorn] Use e as extension list.",
   "  -:   [All but Acorn, VM/CMS, MVS, Tandem] Allow extract archive members into",
   "         locations outside of current extraction root folder.  This allows",
   "         paths such as ../foo to be extracted above the current extraction",
   "         directory, which can be a security problem.",
-  "  -^   [Unix] Allow control characters in names of extracted entries.  Usually",
+  "  -^   [UNIX] Allow control characters in names of extracted entries.  Usually",
   "         this is not a good thing and should be avoided.",
   "  -2   [VMS] Force unconditional conversion of names to ODS-compatible names.",
   "         Default is to exploit destination file system, preserving cases and",
@@ -3600,12 +3601,12 @@ static void help_extended( __GX)
   "ZipInfo options (these are used in ZipInfo mode (unzip -Z ...)):",
   "  -1  List names only, one per line.  No headers/trailers.  Good for scripts.",
   "  -2  List names only as -1, but allow headers, trailers, and comments.",
-  "  -s  List archive entries in short Unix ls -l format.  Default list format.",
-  "  -m  List in long Unix ls -l format.  Like -s, but includes compression %.",
-  "  -l  List in long Unix ls -l format.  Like -m, but compression in bytes.",
+  "  -s  List archive entries in short UNIX ls -l format.  Default list format.",
+  "  -m  List in long UNIX ls -l format.  Like -s, but includes compression %.",
+  "  -l  List in long UNIX ls -l format.  Like -m, but compression in bytes.",
   "  -v  List zipfile information in verbose, multi-page format.",
   "  -h  List header line.  Includes archive name, actual size, total files.",
-  "  -M  Pipe all output through internal pager similar to Unix more(1) command.",
+  "  -M  Pipe all output through internal pager similar to UNIX more(1) command.",
   "  -t  List totals for files listed or for all files.  Includes uncompressed",
   "        and compressed sizes, and compression factors.",
   "  -T  Print file dates and times in a sortable decimal format (yymmdd.hhmmss)",
@@ -4237,7 +4238,7 @@ void show_version_info( __GX)
  *  option abbreviation (like --te for --temp-file if --te unique),
  *  short and long option values (like -b filename or --temp-file filename
  *  or --temp-file=filename), optional and required values, option negation
- *  by trailing - (like -S- to not include hidden and system files in MSDOS),
+ *  by trailing - (like -S- to not include hidden and system files in DOS),
  *  value lists (like -x a b c), argument permuting (returning all options
  *  and values before any non-option arguments), and argument files (where
  *  any non-option non-value argument in form @path gets substituted with

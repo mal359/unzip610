@@ -208,7 +208,7 @@ freely, subject to the above disclaimer and the following restrictions:
 /* use prototypes and ANSI libraries if __STDC__, or MS-DOS, or OS/2, or Win32,
  * or IBM C Set/2, or Borland C, or Watcom C, or GNU gcc (emx or Cygwin),
  * or Macintosh, or Sequent, or Atari, or IBM RS/6000, or Silicon Graphics,
- * or Convex?, or AtheOS, or BeOS.
+ * or Convex?, or AtheOS, or BeOS, or Haiku.
  */
 # if (defined(__STDC__) || defined(MSDOS) || defined(OS2) || defined(WIN32))
 #  ifndef PROTO
@@ -251,7 +251,8 @@ freely, subject to the above disclaimer and the following restrictions:
 #   define MODERN
 #  endif
 # endif
-# if (defined(CMS_MVS) || defined(__ATHEOS__) || defined(__BEOS__))
+# if (defined(CMS_MVS) || defined(__ATHEOS__) || defined(__BEOS__) \
+      || defined(__HAIKU__))
 /* || defined(CONVEX) ? */
 #  ifndef PROTO
 #   define PROTO
@@ -532,11 +533,13 @@ typedef struct _UzpOpts {
     int Jr_flag;        /* -Jr: Ignore Resource fork. */
 #  endif /* defined( UNIX) && defined( __APPLE__) */
     int java_cafe;      /* --jar: Java CAFE extra block assumed/detected. */
-#  if (defined(__ATHEOS__) || defined(__BEOS__) || defined(UNIX))
+#  if defined(__ATHEOS__) || defined(__BEOS__) || defined(UNIX) \
+       || defined(__HAIKU__)
     int K_flag;         /* -K: Keep setuid/setgid/tacky permissions. */
 #  endif
 #  if !defined( NO_KFLAG) && !defined( KFLAG)
-#   if defined( __ATHEOS__) || defined( __BEOS__) || defined( UNIX)
+#   if defined(__ATHEOS__) || defined(__BEOS__) || defined(UNIX) \
+        || defined(__HAIKU__)
 #    define KFLAG
 #   else
 #    if defined( VMS)
@@ -588,7 +591,8 @@ typedef struct _UzpOpts {
     int vflag;          /* -v: Verbose/version.  (ZipInfo: Verbose listing.) */
     int V_flag;         /* -V: Retain VMS version numbers. */
     int W_flag;         /* -W: Wildcard '*' won't match '/' dir separator. */
-#  if (defined (__ATHEOS__) || defined(__BEOS__) || defined(UNIX))
+#  if (defined (__ATHEOS__) || defined(__BEOS__) || defined(UNIX) \
+       || defined(__HAIKU__))
     int X_flag;         /* -X: Restore owner/protection or UID/GID. */
 #  else
 #   if (defined(TANDEM) || defined(THEOS))

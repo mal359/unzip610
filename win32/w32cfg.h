@@ -486,7 +486,14 @@ int symlinkw( const char *target, const wchar_t *name, int is_dir);
 #    undef Cdecl
 #    define Cdecl
 
-/* gaah -- Watcom's docs claim that _get_osfhandle exists, but it doesn't.  */
+/* gaah -- Watcom's docs claim that _get_osfhandle exists, but it doesn't.  *
+ *
+ * (Open) Watcom has _get_osfhandle as an alias for __posixhandle...
+ * ...but that is the only use of __posixhandle in the entire 
+ * standard library.
+ *
+ * Very bizarre. MAL2025
+ */
 #    define _get_osfhandle _os_handle
 
 /* Get asm routines to link properly without using "__cdecl": */
