@@ -185,6 +185,8 @@
     <ClCompile Include="..\..\..\wrap\aescrypt.c" />
     <ClCompile Include="..\..\..\wrap\aeskey.c" />
     <ClCompile Include="..\..\..\wrap\aestab.c" />
+    <ClCompile Include="..\..\..\wrap\CpuArch.c" />
+	  <ClCompile Include="..\..\..\wrap\CpuArchP.c" />
     <ClCompile Include="..\..\..\wrap\crc_i386.c" />
     <ClCompile Include="..\..\..\wrap\fileenc.c" />
     <ClCompile Include="..\..\..\wrap\hmac.c" />
