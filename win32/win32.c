@@ -4398,12 +4398,12 @@ void version(__G)
 #    elif defined _ARM_
       "Windows RT", " (ARM)",
 #    else
-      "Windows 9x/NT", " (Intel)",
+      "Win32", " (Intel)",
 #    endif
 #   endif
 
 #   if defined( __DATE__) && !defined( NO_BUILD_DATE)
-      "\non ", __DATE__
+      "\n on ", __DATE__
 #   else
       "", ""
 #   endif
