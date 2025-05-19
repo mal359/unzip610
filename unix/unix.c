@@ -628,14 +628,7 @@ int mapname( __GX__ OFT( int)renamed)
                 break;
 
 #ifdef __CYGWIN__  /* Cygwin runs on Win32, apply FAT/NTFS filename rules */
-            case ':':   /* drive spec not stored, so no colon allowed */
             case '\\':  /* '\\' may come as normal filename char (not */
-            case '<':   /*  dir sep char!) from unix-like file system */
-            case '>':   /* no redirection symbols allowed either */
-            case '|':   /* no pipe signs allowed */
-            case '"':   /* no double quotes allowed */
-            case '?':   /* no wildcards allowed */
-            case '*':
                 *pp++ = '_';  /* these rules apply equally to FAT and NTFS */
                 break;
 #endif
